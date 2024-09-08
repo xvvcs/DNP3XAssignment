@@ -67,7 +67,7 @@ public class CommentInMemortyRepository : ICommentRepository
         return Task.CompletedTask;
     }
 
-    public Task DislikeAsync(Comment comment)
+    public Task DisLikeAsync(Comment comment)
     {
         Comment? getComment = comments.SingleOrDefault(c => c.Id == comment.Id);
         if (getComment is null)

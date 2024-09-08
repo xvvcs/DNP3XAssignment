@@ -61,8 +61,9 @@ public class PostInMemoryRepository : IPostRepository
         FindPost(post).LikeCount++;
         return Task.CompletedTask;
     }
+    
 
-    public Task DislikeAsync(Post post)
+    public Task DisLikeAsync(Post post)
     {
         FindPost(post).DislikeCount++;
         return Task.CompletedTask;
