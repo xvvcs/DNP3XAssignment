@@ -41,3 +41,6 @@ Optional features
 · A user becomes moderator of a sub forum, they created, meaning they can delete comments and posts.
 
 · Feel free to add further ideas yourself.
+
+Domain Model:
+![Alt text](https://raw.githubusercontent.com/xvvcs/DNP3XAssignment1/master/DomainModelAssigment1.png)
