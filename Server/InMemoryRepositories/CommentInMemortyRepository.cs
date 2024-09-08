@@ -55,4 +55,26 @@ public class CommentInMemortyRepository : ICommentRepository
     {
         return comments.AsQueryable();
     }
+
+    public Task LikeAsync(Comment comment)
+    {
+        Comment? getComment = comments.SingleOrDefault(c => c.Id == comment.Id);
+        if (getComment is null)
+        {
+            throw new InvalidOperationException($"Comment with ID '{comment.Id}' not found");
+        }
+        getComment.LikeCount++;
+        return Task.CompletedTask;
+    }
+
+    public Task DislikeAsync(Comment comment)
+    {
+        Comment? getComment = comments.SingleOrDefault(c => c.Id == comment.Id);
+        if (getComment is null)
+        {
+            throw new InvalidOperationException($"Comment with ID '{comment.Id}' not found");
+        }
+        getComment.DislikeCount++;
+        return Task.CompletedTask;
+    }
 }

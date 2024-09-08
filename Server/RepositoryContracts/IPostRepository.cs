@@ -9,4 +9,6 @@ public interface IPostRepository
     Task DeleteAsync (int id);
     Task UpdateAsync (Post post);
     IQueryable<Post> GetMany();
+    Task LikeAsync (Post post);
+    Task DisLikeAsync (Post post);
 }
