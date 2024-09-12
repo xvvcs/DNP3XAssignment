@@ -77,4 +77,10 @@ public class CommentInMemortyRepository : ICommentRepository
         getComment.DislikeCount++;
         return Task.CompletedTask;
     }
+    
+    public Task<List<Comment>> GetCommentsByPostIdAsync(int postId)
+    {
+        var filteredComments = comments.Where(c => c.PostId == postId).ToList();
+        return Task.FromResult(filteredComments);
+    }
 }

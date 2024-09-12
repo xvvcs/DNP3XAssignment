@@ -11,4 +11,5 @@ public interface ICommentRepository
     IQueryable<Comment> GetManyAsync();
     Task LikeAsync (Comment comment);
     Task DisLikeAsync (Comment comment);
+    Task<List<Comment>> GetCommentsByPostIdAsync(int postId);
 }
