@@ -6,6 +6,15 @@ public class UserInMemoryRepository: IUserRepository
     
 {
     List<User> users = new List<User>();
+
+    public UserInMemoryRepository()
+    {
+        _ = AddASync(new User("Kuba", "password123")).Result; // id = 1
+        _ = AddASync(new User("Maciej", "securepassword")).Result; // id = 2
+        _ = AddASync(new User("Arturs", "9876")).Result; // id = 3
+        _ = AddASync(new User("user_1", "password:)")).Result; // id = 4
+        _ = AddASync(new User("user_2", "password:(")).Result; // id = 5
+    }
     
     public User FindUser(User user)
     {
