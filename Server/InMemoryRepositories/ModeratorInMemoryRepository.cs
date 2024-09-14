@@ -55,6 +55,12 @@ public class ModeratorInMemoryRepository : IModeratorRepository
         return moderators.AsQueryable();
     }
 
+    public Task<List<Moderator>> GetModeratorsBySubForumIdAsync(int subForumId)
+    {
+        var filteredModerators = moderators.Where(m => m.SubForumId == subForumId).ToList();
+        return Task.FromResult(filteredModerators);
+    }
+
     public Task<Moderator> GetSingleAsync(int id)
     {
         return Task.FromResult(FindModeratorById(id));

@@ -9,6 +9,7 @@ public interface IModeratorRepository
     Task DeleteAsync(int id);
     Task<Moderator> AddAsync(Moderator moderator);
     IQueryable<Moderator> GetManyAsync();
+    Task<List<Moderator>> GetModeratorsBySubForumIdAsync(int subForumId);
     
     
 }
