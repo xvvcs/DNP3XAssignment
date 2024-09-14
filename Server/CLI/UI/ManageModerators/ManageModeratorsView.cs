@@ -18,9 +18,9 @@ public class ManageModeratorsView
         Console.WriteLine($"Moderator with ID {moderatorId} has been deleted");
     }
 
-    public async Task UpdateModerator(int userId, int subForumId)
+    public async Task UpdateModerator(int moderatorId, int userId, int subForumId)
     {
-        Moderator moderator = new Moderator(userId, subForumId);
+        Moderator moderator = new Moderator(moderatorId, userId, subForumId);
         await moderatorRepository.UpdateAsync(moderator);
         Console.WriteLine($"Moderator with ID {moderator.Id} has been updated");
     }
