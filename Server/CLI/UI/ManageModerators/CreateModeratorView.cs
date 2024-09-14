@@ -12,7 +12,7 @@ public class CreateModeratorView
         this.moderatorRepository = moderatorRepository;
     }
 
-    public async Task CreateModerator(int userID, int subForumID)
+    public async Task CreateModeratorAsync(int userID, int subForumID)
     {
         Moderator moderator = new Moderator(userID, subForumID);
         await moderatorRepository.AddAsync(moderator);

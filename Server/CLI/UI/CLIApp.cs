@@ -1,4 +1,5 @@
 using CLI.UI.ManageComments;
+using CLI.UI.ManageModerators;
 using CLI.UI.ManagePosts;
 using CLI.UI.ManageUsers;
 using RepositoryContracts;
@@ -22,11 +23,17 @@ namespace CLI.UI
         private readonly ListUsersView _listUsersView;
         private readonly SingleUserView _singleUserView;
         private readonly ManageUsersView _manageUsersView;
+        
+        private readonly CreateModeratorView _createModeratorView;
+        private readonly ListModeratorsView _listModeratorsView;
+        private readonly SingleModeratorView _singleModeratorView;
+        private readonly ManageModeratorsView _manageModeratorsView;
 
         public CliApp(
             IUserRepository userRepository, 
             ICommentRepository commentRepository, 
-            IPostRepository postRepository)
+            IPostRepository postRepository,
+            IModeratorRepository moderatorRepository)
         {
             
             _createPostView = new CreatePostView(postRepository);
@@ -44,6 +51,11 @@ namespace CLI.UI
             _listUsersView = new ListUsersView(userRepository);
             _singleUserView = new SingleUserView(userRepository);
             _manageUsersView = new ManageUsersView(userRepository);
+            
+            _createModeratorView = new CreateModeratorView(moderatorRepository);
+            _listModeratorsView = new ListModeratorsView(moderatorRepository, userRepository, subForumRepository);
+            _singleModeratorView = new SingleModeratorView(moderatorRepository, userRepository, subForumRepository);
+            _manageModeratorsView = new ManageModeratorsView(moderatorRepository);
         }
 
         public async Task StartAsync()
@@ -56,6 +68,7 @@ namespace CLI.UI
                 Console.WriteLine("1. Manage Posts");
                 Console.WriteLine("2. Manage Comments");
                 Console.WriteLine("3. Manage Users");
+                Console.WriteLine("4. Manage Moderators");
                 Console.WriteLine("0. Exit");
                 Console.Write("Choose an option: ");
                 var input = Console.ReadLine();
@@ -70,6 +83,9 @@ namespace CLI.UI
                         break;
                     case "3":
                         await ManageUsersMenu();
+                        break;
+                    case "4":
+                        await ManageModeratorsMenu();
                         break;
                     case "0":
                         exit = true;
@@ -266,6 +282,78 @@ namespace CLI.UI
                     break;
                 default:
                     Console.WriteLine("Invalid option. Try again.");
+                    break;
+            }
+        }
+
+        private async Task ManageModeratorsMenu()
+        {
+            Console.WriteLine("\n--- Manage Moderators ---");
+            Console.WriteLine("1. View All Moderators");
+            Console.WriteLine("2. View All Moderators by Sub-Forum ID");
+            Console.WriteLine("3. View Single Moderator");
+            Console.WriteLine("4. Create Moderator");
+            Console.WriteLine("5. Update Moderator");
+            Console.WriteLine("6. Delete Moderator");
+            Console.Write("Choose an option: ");
+            var input = Console.ReadLine();
+
+            switch (input)
+            {
+                case "1":
+                    await _listModeratorsView.DisplayModeratorsAsync();
+                    break;
+                case "2":
+                    Console.Write("Enter Sub-Forum ID to View Moderators: ");
+                    if (int.TryParse(Console.ReadLine(), out int subForumId1))
+                    {
+                        await _listModeratorsView.DisplayModeratorsBySubForumIdAsync(subForumId1);
+                    }
+
+                    break;
+                case "3":
+                    Console.Write("Enter User ID: ");
+                    if (int.TryParse(Console.ReadLine(), out int userId1))
+                    {
+                        await _singleModeratorView.DisplayModerator(userId1);
+                    }
+
+                    break;
+                case "4":
+                    Console.Write("Enter User ID: ");
+                    if (int.TryParse(Console.ReadLine(), out int userId))
+                    {
+                        Console.Write("Enter Sub-Forum ID: ");
+                        if (int.TryParse(Console.ReadLine(), out int subForumId))
+                        {
+                            await _createModeratorView.CreateModeratorAsync(userId, subForumId);
+                        }
+                    }
+
+                    break;
+                case "5": //TODO: Correct this so it gets moderator, user and forum ids!!!!
+                    Console.Write("Enter Moderator ID to Update: ");
+                    if (int.TryParse(Console.ReadLine(), out int moderatorID))
+                    {
+                        Console.Write("Enter New User ID: ");
+                        if (int.TryParse(Console.ReadLine(), out int newUserID))
+                        {
+                            Console.Write("Enter New Sub-Forum ID: ");
+                            if (int.TryParse(Console.ReadLine(), out int newSubForumID))
+                            {
+                                await _manageModeratorsView.UpdateModerator( newUserID, newSubForumID);
+                            }
+                        }
+                    }
+
+                    break;
+                case "6":
+                    Console.Write("Enter Moderator ID to Delete: ");
+                    if (int.TryParse(Console.ReadLine(), out int moderatorId))
+                    {
+                        await _manageModeratorsView.DeleteModerator(moderatorId);
+                    }
+
                     break;
             }
         }
