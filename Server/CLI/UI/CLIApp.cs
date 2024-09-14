@@ -58,6 +58,7 @@ namespace CLI.UI
             _manageModeratorsView = new ManageModeratorsView(moderatorRepository);
         }
 
+        // Shouldn't we have some back option in all of this scenarios?
         public async Task StartAsync()
         {
             bool exit = false;
@@ -120,6 +121,26 @@ namespace CLI.UI
                     if (int.TryParse(Console.ReadLine(), out int postId))
                     {
                         await _singlePostView.DisplayPostAsync(postId);
+                        
+                        Console.WriteLine("\n--- Post Interaction ---");
+                        Console.WriteLine("1. Like Post");
+                        Console.WriteLine("2. Dislike Post");
+                        Console.Write("Choose an option: ");
+                        var interactionInput = Console.ReadLine();           //TODO user can like and dislike the post infinitely. We need to track what user likes what to avoid multiple liking and disliking of one post
+                        switch (interactionInput)
+                        {
+                            case "1":
+                                await _managePostsView.LikePostAsync(postId);
+                                Console.WriteLine("You liked the post.");
+                                break;
+                            case "2":
+                                await _managePostsView.DislikePostAsync(postId);
+                                Console.WriteLine("You disliked the post.");
+                                break;
+                            default:
+                                Console.WriteLine("Invalid option. Returning to main menu.");
+                                break;
+                        }
                     }
                     break;
                 case "3":
@@ -133,7 +154,7 @@ namespace CLI.UI
                         await _createPostView.addPostAsync(body, title, userId);
                     }
                     break;
-                case "4": //TODO: CORRECT IT SO LIKES ARE KEPT THE SAME
+                case "4": 
                     Console.Write("Enter Post ID to Update: ");
                     if (int.TryParse(Console.ReadLine(), out int postToUpdateId))
                     {
@@ -144,7 +165,7 @@ namespace CLI.UI
                         Console.Write("Enter User ID: ");
                         if (int.TryParse(Console.ReadLine(), out int updateUserId))
                         {
-                            await _managePostsView.UpdatePostAsync(postToUpdateId, newBody, newTitle, updateUserId, 0, 0);
+                            await _managePostsView.UpdatePostAsync(postToUpdateId, newBody, newTitle, updateUserId);
                         }
                     }
                     break;
