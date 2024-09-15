@@ -8,6 +8,7 @@ IUserRepository userRepository = new UserInMemoryRepository();
 ICommentRepository commentRepository = new CommentInMemoryRepository();
 IPostRepository postRepository = new PostInMemoryRepository();
 IModeratorRepository moderatorRepository = new ModeratorInMemoryRepository();
+ISubForumRepository subForumRepository = new SubForumInMemoryRepository();
 
-var cliApp = new CliApp(userRepository, commentRepository, postRepository, moderatorRepository);
+var cliApp = new CliApp(userRepository, commentRepository, postRepository, moderatorRepository, subForumRepository);
 await cliApp.StartAsync();

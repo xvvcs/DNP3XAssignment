@@ -1,6 +1,7 @@
 using CLI.UI.ManageComments;
 using CLI.UI.ManageModerators;
 using CLI.UI.ManagePosts;
+using CLI.UI.ManageSubForums;
 using CLI.UI.ManageUsers;
 using RepositoryContracts;
 
@@ -28,12 +29,18 @@ namespace CLI.UI
         private readonly ListModeratorsView _listModeratorsView;
         private readonly SingleModeratorView _singleModeratorView;
         private readonly ManageModeratorsView _manageModeratorsView;
+        
+        private readonly CreateSubForumView _createSubForumView;
+        private readonly ListSubForumsView _listSubForumsView;
+        private readonly SingleSubForumView _singleSubForumView;
+        private readonly ManageSubForumsView _manageSubForumsView;
 
         public CliApp(
             IUserRepository userRepository, 
             ICommentRepository commentRepository, 
             IPostRepository postRepository,
-            IModeratorRepository moderatorRepository)
+            IModeratorRepository moderatorRepository,
+            ISubForumRepository subForumRepository)
         {
             
             _createPostView = new CreatePostView(postRepository);
@@ -54,8 +61,13 @@ namespace CLI.UI
             
             _createModeratorView = new CreateModeratorView(moderatorRepository);
             _listModeratorsView = new ListModeratorsView(moderatorRepository, userRepository, subForumRepository);
-            _singleModeratorView = new SingleModeratorView(moderatorRepository, userRepository, subForumRepository);
+            _singleModeratorView = new SingleModeratorView(moderatorRepository, userRepository);
             _manageModeratorsView = new ManageModeratorsView(moderatorRepository);
+            
+            _createSubForumView = new CreateSubForumView(subForumRepository);
+            _listSubForumsView = new ListSubForumsView(subForumRepository, moderatorRepository, userRepository);
+            _singleSubForumView = new SingleSubForumView(subForumRepository, moderatorRepository);
+            _manageSubForumsView = new ManageSubForumsView(subForumRepository);
         }
 
         // Shouldn't we have some back option in all of this scenarios?
@@ -70,6 +82,7 @@ namespace CLI.UI
                 Console.WriteLine("2. Manage Comments");
                 Console.WriteLine("3. Manage Users");
                 Console.WriteLine("4. Manage Moderators");
+                Console.WriteLine("5. Manage Sub-Forums");
                 Console.WriteLine("0. Exit");
                 Console.Write("Choose an option: ");
                 var input = Console.ReadLine();
@@ -87,6 +100,9 @@ namespace CLI.UI
                         break;
                     case "4":
                         await ManageModeratorsMenu();
+                        break;
+                    case "5":
+                        await ManageSubForumsMenu();
                         break;
                     case "0":
                         exit = true;
@@ -108,6 +124,7 @@ namespace CLI.UI
             Console.WriteLine("3. Create Post");
             Console.WriteLine("4. Update Post");
             Console.WriteLine("5. Delete Post");
+            Console.WriteLine("0. Back to Main Menu");
             Console.Write("Choose an option: ");
             var input = Console.ReadLine();
 
@@ -125,6 +142,7 @@ namespace CLI.UI
                         Console.WriteLine("\n--- Post Interaction ---");
                         Console.WriteLine("1. Like Post");
                         Console.WriteLine("2. Dislike Post");
+                        Console.WriteLine("0. Back to Main Menu");
                         Console.Write("Choose an option: ");
                         var interactionInput = Console.ReadLine();           //TODO user can like and dislike the post infinitely. We need to track what user likes what to avoid multiple liking and disliking of one post
                         switch (interactionInput)
@@ -137,8 +155,11 @@ namespace CLI.UI
                                 await _managePostsView.DislikePostAsync(postId);
                                 Console.WriteLine("You disliked the post.");
                                 break;
+                            case "0":
+                                await StartAsync();
+                                break;
                             default:
-                                Console.WriteLine("Invalid option. Returning to main menu.");
+                                Console.WriteLine("Invalid option. Try again.");
                                 break;
                         }
                     }
@@ -176,6 +197,9 @@ namespace CLI.UI
                         await _managePostsView.DeletePostAsync(postToDeleteId);
                     }
                     break;
+                case "0":
+                    await StartAsync();
+                    break;
                 default:
                     Console.WriteLine("Invalid option. Try again.");
                     break;
@@ -191,6 +215,7 @@ namespace CLI.UI
             Console.WriteLine("4. Create Comment");
             Console.WriteLine("5. Update Comment");
             Console.WriteLine("6. Delete Comment");
+            Console.WriteLine("0. Back to Main Menu");
             Console.Write("Choose an option: ");
             var input = Console.ReadLine();
 
@@ -247,6 +272,9 @@ namespace CLI.UI
                         await _manageCommentsView.DeleteComment(commentId);
                     }
                     break;
+                case "0":
+                    await StartAsync();
+                    break;
                 default:
                     Console.WriteLine("Invalid option. Try again.");
                     break;
@@ -261,6 +289,7 @@ namespace CLI.UI
             Console.WriteLine("3. Create User");
             Console.WriteLine("4. Update User");
             Console.WriteLine("5. Delete User");
+            Console.WriteLine("0. Back to Main Menu");
             Console.Write("Choose an option: ");
             var input = Console.ReadLine();
 
@@ -301,6 +330,9 @@ namespace CLI.UI
                         await _manageUsersView.DelateUserAsync(userIdToDelete);
                     }
                     break;
+                case "0":
+                    await StartAsync();
+                    break;
                 default:
                     Console.WriteLine("Invalid option. Try again.");
                     break;
@@ -316,6 +348,7 @@ namespace CLI.UI
             Console.WriteLine("4. Create Moderator");
             Console.WriteLine("5. Update Moderator");
             Console.WriteLine("6. Delete Moderator");
+            Console.WriteLine("0. Back to Main Menu");
             Console.Write("Choose an option: ");
             var input = Console.ReadLine();
 
@@ -352,7 +385,7 @@ namespace CLI.UI
                     }
 
                     break;
-                case "5": //TODO: Correct this so it gets moderator, user and forum ids!!!!
+                case "5":
                     Console.Write("Enter Moderator ID to Update: ");
                     if (int.TryParse(Console.ReadLine(), out int moderatorID))
                     {
@@ -362,7 +395,7 @@ namespace CLI.UI
                             Console.Write("Enter New Sub-Forum ID: ");
                             if (int.TryParse(Console.ReadLine(), out int newSubForumID))
                             {
-                                await _manageModeratorsView.UpdateModerator( newUserID, newSubForumID);
+                                await _manageModeratorsView.UpdateModerator(newUserID, moderatorID, newSubForumID);
                             }
                         }
                     }
@@ -376,7 +409,82 @@ namespace CLI.UI
                     }
 
                     break;
+                case "0":
+                    await StartAsync();
+                    break;
+                default:
+                    Console.WriteLine("Invalid option. Try again.");
+                    break;
             }
         }
+
+        private async Task ManageSubForumsMenu()
+        {
+            Console.WriteLine("\n--- Manage Sub-Forums ---");
+            Console.WriteLine("1. View All Sub-Forums");
+            Console.WriteLine("2. View Single Sub-Forum");
+            Console.WriteLine("3. Create Sub-Forum");
+            Console.WriteLine("4. Update Sub-Forum");
+            Console.WriteLine("5. Delete Sub-Forum");
+            Console.WriteLine("0. Back to Main Menu");
+            Console.Write("Choose an option: ");
+            var input = Console.ReadLine();
+
+            switch (input)
+            {
+                case "1":
+                    Console.WriteLine("Displaying all SubForums:");
+                    await _listSubForumsView.DisplayAllSubForums();
+                    break;
+                case "2":
+                    Console.Write("Enter Sub-Forum ID: ");
+                    if (int.TryParse(Console.ReadLine(), out int subForumId))
+                    {
+                        await _singleSubForumView.DisplaySingleSubForum(subForumId);
+                    }
+
+                    break;
+                case "3":
+                    Console.Write("Enter Sub-Forum Title: ");
+                    var title = Console.ReadLine();
+                    Console.Write("Enter Sub-Forum Description: ");
+                    var description = Console.ReadLine();
+                    Console.Write("Enter your userID: ");
+                    if (int.TryParse(Console.ReadLine(), out int userID))
+                    {
+                        await _createSubForumView.createSubForumAsync(title, description, userID);
+                    }
+
+                    break;
+                case "4":
+                    Console.Write("Enter Sub-Forum ID to Update: ");
+                    if (int.TryParse(Console.ReadLine(), out int subForumIdToUpdate))
+                    {
+                        Console.Write("Enter New Sub-Forum Title: ");
+                        var newTitle = Console.ReadLine();
+                        Console.Write("Enter New Sub-Forum Description: ");
+                        var newDescription = Console.ReadLine();
+                        await _manageSubForumsView.UpdateSubForumAsync(subForumIdToUpdate, newTitle, newDescription);
+                    }
+
+                    break;
+                case "5":
+                    Console.Write("Enter Sub-Forum ID to Delete: ");
+                    if (int.TryParse(Console.ReadLine(), out int subForumIdToDelete))
+                    {
+                        await _manageSubForumsView.DeleteSubForumAsync(subForumIdToDelete);
+                    }
+
+                    break;
+                case "0":
+                    await StartAsync();
+                    break;
+                default:
+                    Console.WriteLine("Invalid option. Try again.");
+                    break;
+            }
+
+        }
+        
     }
 }

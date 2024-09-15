@@ -45,6 +45,11 @@ public class SubForumInMemoryRepository: ISubForumRepository
       return Task.CompletedTask;
     }
 
+    public Task<int> FindSubForumCreator(int subForumID)
+    {
+        return Task.FromResult(FindSubForumById(subForumID).UserId);
+    }
+
     public Task DeleteAsync(int id)
     {
         subForums.Remove(FindSubForumById(id));

@@ -5,6 +5,7 @@ using RepositoryContracts;
 public class PostInMemoryRepository : IPostRepository
 {
     private List<Post> posts = new List<Post>();
+    private bool post_liked = false;
 
     public PostInMemoryRepository()
     {
