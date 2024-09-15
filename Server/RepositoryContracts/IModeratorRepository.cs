@@ -10,6 +10,4 @@ public interface IModeratorRepository
     Task<Moderator> AddAsync(Moderator moderator);
     IQueryable<Moderator> GetManyAsync();
     Task<List<Moderator>> GetModeratorsBySubForumIdAsync(int subForumId);
-    
-    
 }

@@ -11,34 +11,44 @@ public class ListSubForumsView
     
     public ListSubForumsView(ISubForumRepository subForumRepository, IModeratorRepository moderatorRepository, IUserRepository userRepository)
     {
+        this.userRepository = userRepository;
         this.moderatorRepository = moderatorRepository;
         this.subForumRepository = subForumRepository;
-        this.userRepository = userRepository;
     }
 
     public async Task DisplayAllSubForums()
     {
         Console.WriteLine("Listing all sub-forums:");
-        var subForums = subForumRepository.GetManyAsync(); 
-            
+        var subForums = subForumRepository.GetManyAsync();
+
         foreach (SubForum subForum in subForums)
         {
             var moderators = await moderatorRepository.GetModeratorsBySubForumIdAsync(subForum.Id);
-            
-            var usernames = new List<string>();
+        
+            var subUsernames = new List<string>();
             foreach (var moderator in moderators)
             {
-                var user = await userRepository.GetSingleAsync(moderator.UserId); 
+                var user = await userRepository.GetSingleAsync(moderator.UserId);
                 if (user != null)
                 {
-                    usernames.Add(user.Username);
+                    subUsernames.Add(user.Username);
                 }
             }
 
-            string moderatorsList = string.Join(", ", usernames);
-
-            Console.WriteLine($"ID: {subForum.Id}, Title: {subForum.Title}, Description: {subForum.Description}, " +
-                              $"Moderated by: {moderatorsList}");
+            if (subUsernames.Any())
+            {
+                Console.WriteLine($"ID: {subForum.Id}, Title: {subForum.Title}, Description: {subForum.Description}");
+                Console.WriteLine("Moderators:");
+                for (int i = 0; i < subUsernames.Count; i++)
+                {
+                    Console.WriteLine($"  {i + 1}. {subUsernames[i]}");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"ID: {subForum.Id}, Title: {subForum.Title}, Description: {subForum.Description}, Moderated by: No moderators assigned.");
+            }
         }
     }
+
 }

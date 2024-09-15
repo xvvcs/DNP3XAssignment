@@ -12,7 +12,6 @@ public class SingleSubForumView
     {
         this.subForumRepository = subForumRepository;
         this.moderatorRepository = moderatorRepository;
-        
     }
 
     public async Task DisplaySingleSubForum(int subForumId)
