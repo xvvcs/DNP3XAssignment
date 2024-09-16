@@ -8,12 +8,13 @@ public class ModeratorInMemoryRepository : IModeratorRepository
 
     public ModeratorInMemoryRepository()
     {
-        _ = AddAsync(new Moderator(1, 1)).Result; // UserId = 1 moderating SubForumId = 1 
-        _ = AddAsync(new Moderator(2, 2)).Result; // UserId = 2 moderating SubForumId = 2 
-        _ = AddAsync(new Moderator(3, 3)).Result; // UserId = 3 moderating SubForumId = 3 
-        _ = AddAsync(new Moderator(4, 4)).Result; // UserId = 4 moderating SubForumId = 4 
-        _ = AddAsync(new Moderator(5, 5)).Result; // UserId = 5 moderating SubForumId = 5 
-        _ = AddAsync(new Moderator(3, 6)).Result; // UserId = 3 moderating SubForumId = 6 
+        // Using the constructor with userId and subForumId
+        _ = AddAsync(new Moderator(userId: 1, subForumId: 1)).Result;  // User: Kuba, SubForum: None of them (Programming languages)
+        _ = AddAsync(new Moderator(userId: 2, subForumId: 2)).Result;  // User: Maciej, SubForum: Any horror movie recommendations
+        _ = AddAsync(new Moderator(userId: 3, subForumId: 3)).Result;  // User: Arturs, SubForum: Comedies
+        _ = AddAsync(new Moderator(userId: 4, subForumId: 4)).Result;  // User: user_1, SubForum: Travel tips Italy
+        _ = AddAsync(new Moderator(userId: 5, subForumId: 5)).Result;  // User: user_2, SubForum: Gym app
+        _ = AddAsync(new Moderator(userId: 1, subForumId: 6)).Result;  // User: Kuba, SubForum: COD Warzone 2.0 (Kuba moderates two subforums)
     }
 
     public Moderator FindModerator(Moderator moderator)
