@@ -5,6 +5,11 @@ using CLI.UI.ManageSubForums;
 using CLI.UI.ManageUsers;
 using RepositoryContracts;
 
+//TODO: Create dummy data for subFormus and moderators
+//TODO: Create Log In and Log Out functionality
+//TODO: Fix likes and dislikes, so you cannot like something infinitely
+//TODO: Fix update comment and post, so that likes and dislikes are kept the same from origina comment/post
+
 
 namespace CLI.UI
 {
@@ -69,8 +74,7 @@ namespace CLI.UI
             _singleSubForumView = new SingleSubForumView(subForumRepository, moderatorRepository);
             _manageSubForumsView = new ManageSubForumsView(subForumRepository);
         }
-
-        // Shouldn't we have some back option in all of this scenarios?
+        
         public async Task StartAsync()
         {
             bool exit = false;
@@ -144,7 +148,7 @@ namespace CLI.UI
                         Console.WriteLine("2. Dislike Post");
                         Console.WriteLine("0. Back to Main Menu");
                         Console.Write("Choose an option: ");
-                        var interactionInput = Console.ReadLine();           //TODO user can like and dislike the post infinitely. We need to track what user likes what to avoid multiple liking and disliking of one post
+                        var interactionInput = Console.ReadLine();           //TODO user can like and dislike the post infinitely. We need to track what user likes to avoid multiple liking and disliking of one post
                         switch (interactionInput)
                         {
                             case "1":
