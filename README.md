@@ -2,6 +2,8 @@
 
 This is a Command Line Interface (CLI) application for managing a forum. The application allows users to manage posts, comments, users, moderators, and sub-forums.
 
+## Domain Model
+![Alt text](https://raw.githubusercontent.com/xvvcs/DNP3XAssignment1/master/DomainModelAssigment1.png)
 ## Features
 
 - **Manage Posts**: Create, view, update, and delete posts.
@@ -80,5 +82,4 @@ This project is licensed under the MIT License.
 
 For any questions or feedback, please contact [xvvcs](https://github.com/xvvcs).
 
-Domain Model:
-![Alt text](https://raw.githubusercontent.com/xvvcs/DNP3XAssignment1/master/DomainModelAssigment1.png)
+
