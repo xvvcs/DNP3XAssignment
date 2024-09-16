@@ -5,10 +5,8 @@ using CLI.UI.ManageSubForums;
 using CLI.UI.ManageUsers;
 using RepositoryContracts;
 
-//TODO: Create dummy data for subFormus and moderators
-//TODO: Create Log In and Log Out functionality
-//TODO: Fix likes and dislikes, so you cannot like something infinitely
-//TODO: Fix update comment and post, so that likes and dislikes are kept the same from origina comment/post
+//Optional TODO: Create Log In and Log Out functionality
+//Optional TODO: Fix likes and dislikes, so you cannot like something infinitely
 
 
 namespace CLI.UI
@@ -148,7 +146,7 @@ namespace CLI.UI
                         Console.WriteLine("2. Dislike Post");
                         Console.WriteLine("0. Back to Main Menu");
                         Console.Write("Choose an option: ");
-                        var interactionInput = Console.ReadLine();           //TODO user can like and dislike the post infinitely. We need to track what user likes to avoid multiple liking and disliking of one post
+                        var interactionInput = Console.ReadLine();          
                         switch (interactionInput)
                         {
                             case "1":
@@ -187,10 +185,8 @@ namespace CLI.UI
                         var newTitle = Console.ReadLine();
                         Console.Write("Enter New Post Body: ");
                         var newBody = Console.ReadLine();
-                        Console.Write("Enter User ID: ");
-                        if (int.TryParse(Console.ReadLine(), out int updateUserId))
                         {
-                            await _managePostsView.UpdatePostAsync(postToUpdateId, newBody, newTitle, updateUserId);
+                            await _managePostsView.UpdatePostAsync(postToUpdateId, newBody, newTitle);
                         }
                     }
                     break;
@@ -262,10 +258,8 @@ namespace CLI.UI
                     {
                         Console.Write("Enter New Comment Body: ");
                         var newContent = Console.ReadLine();
-                        Console.Write("Enter User ID: ");
-                        if (int.TryParse(Console.ReadLine(), out int userId))
                         {
-                            await _manageCommentsView.UpdateComment(commentID, newContent, userId);
+                            await _manageCommentsView.UpdateComment(commentID, newContent);
                         }
                     }
                     break;

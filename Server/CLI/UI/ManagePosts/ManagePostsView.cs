@@ -19,10 +19,10 @@ public class ManagePostsView
 
     }
 
-    public async Task UpdatePostAsync(int postId, string body, string title, int userID)
+    public async Task UpdatePostAsync(int postId, string body, string title)
     {
         Post existingPost = postRepository.FindPostById(postId);
-        Post post = new Post(title, body, userID, existingPost.LikeCount, existingPost.DislikeCount, postId);
+        Post post = new Post(title, body, existingPost.UserId, existingPost.LikeCount, existingPost.DislikeCount, postId);
         await postRepository.UpdateAsync(post);
         Console.WriteLine($"Post {postId} updated successfully.");
     }

@@ -18,10 +18,10 @@ public class ManageCommentsView
         Console.WriteLine($"Comment with ID {commentID} has been deleted.");
     }
 
-    public async Task UpdateComment(int commentID, string newContent, int userID)
+    public async Task UpdateComment(int commentID, string newContent)
     {
         Comment existingComment = commentRepository.FindCommentById(commentID);
-        Comment comment = new Comment(newContent, existingComment.PostId, userID, existingComment.LikeCount, existingComment.DislikeCount, commentID);    
+        Comment comment = new Comment(newContent, existingComment.PostId, existingComment.UserId, existingComment.LikeCount, existingComment.DislikeCount, commentID);    
         await commentRepository.UpdateAsync(comment);
         Console.WriteLine($"Comment with ID {commentID} has been updated.");
     }

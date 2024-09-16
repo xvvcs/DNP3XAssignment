@@ -6,6 +6,16 @@ public class ModeratorInMemoryRepository : IModeratorRepository
 {
     private List<Moderator> moderators = new List<Moderator>();
 
+    public ModeratorInMemoryRepository()
+    {
+        _ = AddAsync(new Moderator(1, 1)).Result; // UserId = 1 moderating SubForumId = 1 
+        _ = AddAsync(new Moderator(2, 2)).Result; // UserId = 2 moderating SubForumId = 2 
+        _ = AddAsync(new Moderator(3, 3)).Result; // UserId = 3 moderating SubForumId = 3 
+        _ = AddAsync(new Moderator(4, 4)).Result; // UserId = 4 moderating SubForumId = 4 
+        _ = AddAsync(new Moderator(5, 5)).Result; // UserId = 5 moderating SubForumId = 5 
+        _ = AddAsync(new Moderator(3, 6)).Result; // UserId = 3 moderating SubForumId = 6 
+    }
+
     public Moderator FindModerator(Moderator moderator)
     {
         Moderator? existingModerator = moderators.FirstOrDefault(m => m.Id == moderator.Id);
