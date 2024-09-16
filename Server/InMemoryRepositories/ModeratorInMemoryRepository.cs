@@ -6,6 +6,17 @@ public class ModeratorInMemoryRepository : IModeratorRepository
 {
     private List<Moderator> moderators = new List<Moderator>();
 
+    public ModeratorInMemoryRepository()
+    {
+        // Using the constructor with userId and subForumId
+        _ = AddAsync(new Moderator(userId: 1, subForumId: 1)).Result;  // User: Kuba, SubForum: None of them (Programming languages)
+        _ = AddAsync(new Moderator(userId: 2, subForumId: 2)).Result;  // User: Maciej, SubForum: Any horror movie recommendations
+        _ = AddAsync(new Moderator(userId: 3, subForumId: 3)).Result;  // User: Arturs, SubForum: Comedies
+        _ = AddAsync(new Moderator(userId: 4, subForumId: 4)).Result;  // User: user_1, SubForum: Travel tips Italy
+        _ = AddAsync(new Moderator(userId: 5, subForumId: 5)).Result;  // User: user_2, SubForum: Gym app
+        _ = AddAsync(new Moderator(userId: 1, subForumId: 6)).Result;  // User: Kuba, SubForum: COD Warzone 2.0 (Kuba moderates two subforums)
+    }
+
     public Moderator FindModerator(Moderator moderator)
     {
         Moderator? existingModerator = moderators.FirstOrDefault(m => m.Id == moderator.Id);
