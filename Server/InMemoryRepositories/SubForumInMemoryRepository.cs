@@ -6,6 +6,28 @@ public class SubForumInMemoryRepository: ISubForumRepository
 {
     private List<SubForum> subForums = new List<SubForum>();
 
+    public SubForumInMemoryRepository()
+    {
+        _ = AddAsync(new SubForum("JAVA","Why is your favourite programming language not JAVA", 2)).Result;
+        _ = AddAsync(new SubForum("JavaScript best","Dont you think that Javascript is much betteer, just the syntax is a littel tricky?", 3)).Result;
+        _ = AddAsync(new SubForum("None of them","Many languages have their pros and cons in various ways, so you might have a favourite actually just depending on how much youre used to code with it", 4)).Result; //id = 1
+        
+        _ = AddAsync(new SubForum("Any horror movie recommendations","I have watched pretty much everything so please suggest something from some hidden gems", 1)).Result; //id = 2
+        _ = AddAsync(new SubForum("Comedies","Same here with comedies!! We have wathed the whole Netflix so are there any suggestions for something good outside Netflix?", 3)).Result; //id = 2
+        
+        _ = AddAsync(new SubForum("Travel tips Italy","I want to make a small Milan trip for 4 days, what would you suggest to visit or which guide to take?", 4)).Result; //id = 3
+        _ = AddAsync(new SubForum("Germany","Best bars or clubs in Berlin", 5)).Result; //id = 3
+        _ = AddAsync(new SubForum("South America","I want to finally go out of Europe. What the best to visit in South America?", 2)).Result; //id = 3
+        
+        _ = AddAsync(new SubForum("Gym app","There are reasonable gym apps like Pro Gym workout", 2)).Result; //id = 4
+        _ = AddAsync(new SubForum("How to follow a diet on an app","Is there and app to follow a diet", 4)).Result; //id = 4
+        
+        _ = AddAsync(new SubForum("5 day exercise routine","Its good to follow a 5 day exercise routine, like working out 3 days, 1 day rest, 2 day workout, 1 day rest", 5)).Result; //id = 5
+        _ = AddAsync(new SubForum("Duration and time of the day" ,"Its good to have a short and rather intense workout ealry in the morning, even before having brekfast", 3)).Result; //id = 5
+        
+        _ = AddAsync(new SubForum("COD Warzone 2.0","How can you say no to some COD", 3)).Result; //id = 6
+    }
+
     public SubForum FindSubForum(SubForum subForum)
     {
         SubForum? exisitingSubForum = subForums.FirstOrDefault(s => s.Id == subForum.Id);
