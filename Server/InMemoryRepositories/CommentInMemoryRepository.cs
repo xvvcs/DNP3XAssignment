@@ -46,6 +46,17 @@ public class CommentInMemoryRepository : ICommentRepository
         _ = AddAsync(new Comment("I'm still obsessed with 'Elden Ring'.", 6, 2)).Result;
 
     }
+
+    public Comment FindCommentById(int id)
+    {
+        Comment? existingComment = comments.FirstOrDefault(c => c.Id == id);
+        if (existingComment is null)
+        {
+            throw new InvalidOperationException("No comment found with id: " + id);
+        }
+
+        return existingComment;
+    }
     public Task<Comment> AddAsync(Comment comment)
     {
         comment.Id = comments.Any()

@@ -265,7 +265,7 @@ namespace CLI.UI
                         Console.Write("Enter User ID: ");
                         if (int.TryParse(Console.ReadLine(), out int userId))
                         {
-                            await _manageCommentsView.UpdateComment(commentID, newContent, userId, 0, 0, 0);
+                            await _manageCommentsView.UpdateComment(commentID, newContent, userId);
                         }
                     }
                     break;

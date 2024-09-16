@@ -18,8 +18,7 @@ public class Moderator
         this.Id = moderatorId;
         this.UserId = userId;
         this.SubForumId = subForumId;
-       
-        // ID is handled in ModeratorInMemoryRepository in case of creation
+        
     }
     
 }
