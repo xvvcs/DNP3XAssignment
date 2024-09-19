@@ -27,7 +27,7 @@ public class ListCommentsView
     public async Task DisplayCommentsAsync()
     {
         Console.WriteLine("Listing all comments:");
-        foreach (Comment comment in commentRepository.GetManyAsync())
+        foreach (Comment comment in commentRepository.GetMany())
         {
             Console.WriteLine($"- {comment.Id}: {comment.Body}");
         }
