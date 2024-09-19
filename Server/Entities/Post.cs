@@ -9,6 +9,7 @@ public class Post
     public int LikeCount { get; set; }
     public int DislikeCount { get; set; }
 
+    public Post() { }
     public Post(string Title, string Body, int UserId)
     {
         this.Body = Body;

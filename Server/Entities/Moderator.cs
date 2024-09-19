@@ -6,6 +6,7 @@ public class Moderator
     public int UserId { get; set; }
     public int SubForumId { get; set; }
 
+    public Moderator() { }
     public Moderator(int userId, int subForumId)
     {
        this.UserId = userId;

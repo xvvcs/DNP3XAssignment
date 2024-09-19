@@ -8,6 +8,8 @@ public class SubForum
     public int UserId { get; set; }
     public int PostId { get; set; }
 
+    
+    public SubForum() { }
     public SubForum(string title, string description, int userId)
     {
         Title = title;

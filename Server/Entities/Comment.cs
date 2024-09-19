@@ -9,6 +9,7 @@ public class Comment
     public int LikeCount { get; set; }
     public int DislikeCount { get; set; }
 
+    public Comment() { }
     public Comment(string body, int postID, int userID)
     {
         Body = body;
