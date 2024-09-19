@@ -47,7 +47,7 @@ public class CommentInMemoryRepository : ICommentRepository
 
     }
 
-    public Comment FindCommentById(int id)
+    public Task<Comment> FindCommentById(int id)
     {
         Comment? existingComment = comments.FirstOrDefault(c => c.Id == id);
         if (existingComment is null)
@@ -55,7 +55,7 @@ public class CommentInMemoryRepository : ICommentRepository
             throw new InvalidOperationException("No comment found with id: " + id);
         }
 
-        return existingComment;
+        return Task.FromResult(existingComment);
     }
     public Task<Comment> AddAsync(Comment comment)
     {

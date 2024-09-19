@@ -26,14 +26,14 @@ public class PostInMemoryRepository : IPostRepository
         }
         return exisitingPost;
     }
-    public Post FindPostById(int id)
+    public Task<Post> FindPostById(int id)
     {
         Post? exisitingPost = posts.FirstOrDefault(p => p.Id == id);
         if (exisitingPost is null)
         {
             throw new InvalidOperationException($"Post with ID '{id}'not found.");
         }
-        return exisitingPost;
+        return Task.FromResult(exisitingPost);
     }
     public Task<Post> AddASync(Post post)
     {
@@ -46,12 +46,12 @@ public class PostInMemoryRepository : IPostRepository
 
     public Task<Post> GetSingleAsync(int id)
     {
-        return Task.FromResult(FindPostById(id));
+        return Task.FromResult(FindPostById(id).Result);
     }
 
     public Task DeleteAsync(int id)
     {
-        posts.Remove(FindPostById(id));
+        posts.Remove(FindPostById(id).Result);
         return Task.CompletedTask;
     }
 

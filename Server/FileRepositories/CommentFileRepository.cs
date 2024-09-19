@@ -17,9 +17,16 @@ public class CommentFileRepository: ICommentRepository
         }
     }
 
-    public Comment FindCommentById(int id)
+    public async Task<Comment> FindCommentById(int id)
     {
-        throw new NotImplementedException();
+        List<Comment> comments = await LoadCommentsAsync();
+        Comment? existingComment = comments.FirstOrDefault(c => c.Id == id);
+        if (existingComment is null)
+        {
+            throw new InvalidOperationException("No comment found with id: " + id);
+        }
+
+        return existingComment;
     }
 
     private async Task<List<Comment>> LoadCommentsAsync()

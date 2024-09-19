@@ -21,7 +21,7 @@ public class ManagePostsView
 
     public async Task UpdatePostAsync(int postId, string body, string title)
     {
-        Post existingPost = postRepository.FindPostById(postId);
+        Post existingPost = postRepository.FindPostById(postId).Result;
         Post post = new Post(title, body, existingPost.UserId, existingPost.LikeCount, existingPost.DislikeCount, postId);
         await postRepository.UpdateAsync(post);
         Console.WriteLine($"Post {postId} updated successfully.");
@@ -29,14 +29,14 @@ public class ManagePostsView
 
     public async Task LikePostAsync(int postId)
     {
-        Post post = postRepository.FindPostById(postId);
+        Post post = postRepository.FindPostById(postId).Result;
         await postRepository.LikeAsync(post);
         Console.WriteLine($"{post.Title} liked.");
     }
 
     public async Task DislikePostAsync(int postId)
     {
-        Post post = postRepository.FindPostById(postId);
+        Post post = postRepository.FindPostById(postId).Result;
         await postRepository.DisLikeAsync(post);
         Console.WriteLine($"{post.Title} disliked.");
     }
