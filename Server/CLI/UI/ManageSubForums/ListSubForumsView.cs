@@ -19,7 +19,7 @@ public class ListSubForumsView
     public async Task DisplayAllSubForums()
     {
         Console.WriteLine("Listing all sub-forums:");
-        var subForums = subForumRepository.GetManyAsync();
+        var subForums = subForumRepository.GetMany();
 
         foreach (SubForum subForum in subForums)
         {

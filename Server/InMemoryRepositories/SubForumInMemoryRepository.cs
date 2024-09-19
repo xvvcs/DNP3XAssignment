@@ -78,7 +78,7 @@ public class SubForumInMemoryRepository: ISubForumRepository
         return Task.CompletedTask;
     }
     
-    public IQueryable<SubForum> GetManyAsync()
+    public IQueryable<SubForum> GetMany()
     {
         return subForums.AsQueryable();
     }
