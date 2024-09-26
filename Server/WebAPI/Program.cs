@@ -3,6 +3,10 @@ using RepositoryContracts;
 
 var builder = WebApplication.CreateBuilder(args);
 
+//TODO: ADD BUSINESS LOGIC TO THE APPLICATION
+//TODO: ADD VALIDATION FOR CREATING USERS
+//TODO: FIX LIKES AND DISLIKES
+
 // Add services to the container.
 
 builder.Services.AddControllers();
