@@ -22,22 +22,22 @@ public class ManagePostsView
     public async Task UpdatePostAsync(int postId, string body, string title)
     {
         Post existingPost = postRepository.FindPostById(postId).Result;
-        Post post = new Post(title, body, existingPost.UserId, existingPost.LikeCount, existingPost.DislikeCount, postId);
+        Post post = new Post(title, body, existingPost.UserId, postId);
         await postRepository.UpdateAsync(post);
         Console.WriteLine($"Post {postId} updated successfully.");
     }
 
-    public async Task LikePostAsync(int postId)
+    public async Task LikePostAsync(int postId, int userId)
     {
         Post post = postRepository.FindPostById(postId).Result;
-        await postRepository.LikeAsync(post);
+        await postRepository.LikeAsync(post, userId);
         Console.WriteLine($"{post.Title} liked.");
     }
 
-    public async Task DislikePostAsync(int postId)
+    public async Task DislikePostAsync(int postId, int userId)
     {
         Post post = postRepository.FindPostById(postId).Result;
-        await postRepository.DisLikeAsync(post);
+        await postRepository.DisLikeAsync(post, userId);
         Console.WriteLine($"{post.Title} disliked.");
     }
 }

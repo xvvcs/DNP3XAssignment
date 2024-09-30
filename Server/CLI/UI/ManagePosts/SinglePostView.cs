@@ -16,7 +16,7 @@ public class SinglePostView
     public async Task DisplayPostAsync(int postId)
     {
         Post? post = await postRepository.GetSingleAsync(postId);
-        Console.WriteLine($"ID: {post.Id}, Title: {post.Title}, Content: {post.Body}, Like Count: {post.LikeCount}, Dislike Count: {post.DislikeCount}");
+        Console.WriteLine($"ID: {post.Id}, Title: {post.Title}, Content: {post.Body}, Like Count: {post.Like}, Dislike Count: {post.Dislike}");
         
         var comments = await commentRepository.GetCommentsByPostIdAsync(postId);
     

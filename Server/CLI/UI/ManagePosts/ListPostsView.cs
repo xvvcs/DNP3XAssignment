@@ -17,7 +17,7 @@ public class ListPostsView
         Console.WriteLine("Listing all posts:");
         foreach (Post post in postRepository.GetMany())
         {
-            Console.WriteLine($"ID: {post.Id}, Title: {post.Title}, Content: {post.Body}, Like Count: {post.LikeCount}, Dislike Count: {post.DislikeCount}");
+            Console.WriteLine($"ID: {post.Id}, Title: {post.Title}, Content: {post.Body}, Like Count: {post.Like}, Dislike Count: {post.Dislike}");
         }
         return Task.CompletedTask;
     }

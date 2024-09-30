@@ -11,6 +11,6 @@ public interface IPostRepository
     Task DeleteAsync (int id);
     Task UpdateAsync (Post post);
     IQueryable<Post> GetMany();
-    Task LikeAsync (Post post);
-    Task DisLikeAsync (Post post);
+    Task LikeAsync (Post post, int userID);
+    Task DisLikeAsync (Post post, int userID);
 }

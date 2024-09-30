@@ -67,16 +67,16 @@ public class PostInMemoryRepository : IPostRepository
     {
         return posts.AsQueryable();
     }
-    public Task LikeAsync(Post post)
+    public Task LikeAsync(Post post, int userId)
     {
-        FindPost(post).LikeCount++;
+        FindPost(post).Like.Add(post.UserId);
         return Task.CompletedTask;
     }
     
 
-    public Task DisLikeAsync(Post post)
+    public Task DisLikeAsync(Post post, int userId)
     {
-        FindPost(post).DislikeCount++;
+        FindPost(post).Dislike.Add(userId);
         return Task.CompletedTask;
     }
 }

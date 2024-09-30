@@ -15,48 +15,45 @@ public class PostFileRepository : IPostRepository
             File.WriteAllText(filePath, "[]");
         }
     }
+
     private async Task<List<Post>> LoadPostsAsync()
     {
         string postAsJson = await File.ReadAllTextAsync(filePath);
-        return JsonSerializer.Deserialize<List<Post>>(postAsJson);
+        return JsonSerializer.Deserialize<List<Post>>(postAsJson) ?? new List<Post>();
     }
+
     private async Task SavePostsAsync(List<Post> posts)
     {
         string postAsJson = JsonSerializer.Serialize(posts);
         await File.WriteAllTextAsync(filePath, postAsJson);
     }
+
     public async Task<Post> FindPostById(int id)
     {
         List<Post> posts = await LoadPostsAsync();
-        Post? exisitingPost = posts.FirstOrDefault(p => p.Id == id);
-        if (exisitingPost is null)
+        Post? existingPost = posts.FirstOrDefault(p => p.Id == id);
+        if (existingPost is null)
         {
-            throw new InvalidOperationException($"Post with ID '{id}'not found.");
+            throw new InvalidOperationException($"Post with ID '{id}' not found.");
         }
-        return exisitingPost;
+        return existingPost;
     }
 
     public async Task<Post> AddASync(Post post)
     {
-      List<Post> posts = await LoadPostsAsync();
-      int maxID = posts.Count > 0 ? posts.Max(p => p.Id) : 1;
-      post.Id = maxID + 1;
-      posts.Add(post);
-      await SavePostsAsync(posts);
-      return post;
+        List<Post> posts = await LoadPostsAsync();
+        int maxID = posts.Count > 0 ? posts.Max(p => p.Id) : 1;
+        post.Id = maxID + 1;
+        posts.Add(post);
+        await SavePostsAsync(posts);
+        return post;
     }
 
     public async Task<Post> GetSingleAsync(int id)
     {
-        List<Post> posts = await LoadPostsAsync();
-        Post? post = posts.FirstOrDefault(p => p.Id == id);
-        if (post is null)
-        {
-            throw new InvalidOperationException($"Post with ID '{id}' not found.");
-        }
-
-        return post;
+        return await FindPostById(id);
     }
+
     public async Task DeleteAsync(int id)
     {
         List<Post> posts = await LoadPostsAsync();
@@ -68,6 +65,7 @@ public class PostFileRepository : IPostRepository
         posts.Remove(postToRemove);
         await SavePostsAsync(posts);
     }
+
     public async Task UpdateAsync(Post post)
     {
         List<Post> posts = await LoadPostsAsync();
@@ -79,16 +77,17 @@ public class PostFileRepository : IPostRepository
 
         posts.Remove(existingPost);
         posts.Add(post);
-
         await SavePostsAsync(posts);
     }
+
     public IQueryable<Post> GetMany()
     {
         string postAsJson = File.ReadAllText(filePath);
-        List<Post> posts = JsonSerializer.Deserialize<List<Post>>(postAsJson);
+        List<Post> posts = JsonSerializer.Deserialize<List<Post>>(postAsJson) ?? new List<Post>();
         return posts.AsQueryable();
     }
-    public async Task LikeAsync(Post post)
+
+    public async Task LikeAsync(Post post, int userId)
     {
         List<Post> posts = await LoadPostsAsync();
         Post? postToLike = posts.FirstOrDefault(p => p.Id == post.Id);
@@ -96,20 +95,37 @@ public class PostFileRepository : IPostRepository
         {
             throw new InvalidOperationException($"Post with ID '{post.Id}' not found.");
         }
-        postToLike.LikeCount++;
-        await SavePostsAsync(posts);
-
+        if (!postToLike.Like.Contains(userId))
+        {
+            postToLike.Like.Add(userId);
+            postToLike.Dislike.Remove(userId);
+            postToLike.updateLikeCount();
+            await SavePostsAsync(posts);
+        }
+        else
+        {
+            throw new InvalidOperationException($"Post has already been liked by user with ID '{userId}'.");
+        }
     }
-    public async Task DisLikeAsync(Post post)
+
+    public async Task DisLikeAsync(Post post, int userId)
     {
         List<Post> posts = await LoadPostsAsync();
-        Post? postToLike = posts.FirstOrDefault(p => p.Id == post.Id);
-        if (postToLike is null)
+        Post? postToDislike = posts.FirstOrDefault(p => p.Id == post.Id);
+        if (postToDislike is null)
         {
             throw new InvalidOperationException($"Post with ID '{post.Id}' not found.");
         }
-
-        postToLike.DislikeCount++;
-        await SavePostsAsync(posts);  
+        if (!postToDislike.Dislike.Contains(userId))
+        {
+            postToDislike.Dislike.Add(userId);
+            postToDislike.Like.Remove(userId);
+            postToDislike.updateLikeCount();
+            await SavePostsAsync(posts);
+        }
+        else
+        {
+            throw new InvalidOperationException($"Post has already been disliked by user with ID '{userId}'.");
+        }
     }
 }

@@ -25,8 +25,8 @@ public class PostsController
             Title = request.Title,
             Body = request.Body,
             UserId = request.UserId,
-            LikeCount = 0,
-            DislikeCount = 0
+            Like = new List<int>(),
+            Dislike = new List<int>()
         };
         await _postRepository.AddASync(post);
         return Results.Created($"posts/{post.Id}", post);
@@ -67,8 +67,8 @@ public class PostsController
             Title = request.Title,
             Body = request.Body,
             UserId = existingPost.UserId,
-            LikeCount = existingPost.LikeCount,
-            DislikeCount = existingPost.DislikeCount
+            Like = existingPost.Like,
+            Dislike = existingPost.Dislike
         };
         await _postRepository.UpdateAsync(post);
         return Results.Ok(post);
@@ -94,22 +94,20 @@ public class PostsController
     }
     
     //POST https://localhost:7198/posts/{id}/like
-    [HttpPost("{id:int}/like")]
-    public async Task<IResult> LikePostAsync(int id)
+    [HttpPost("{id:int} and {userID:int}/like")]
+    public async Task<IResult> LikePostAsync(int id, int userID)
     {
         Post post = await _postRepository.FindPostById(id);
-        post.LikeCount++;
-        await _postRepository.LikeAsync(post);
+        await _postRepository.LikeAsync(post, userID);
         return Results.Ok(post);
     }
     
     //POST https://localhost:7198/posts/{id}/dislike
-    [HttpPost("{id:int}/dislike")]
-    public async Task<IResult> DislikePostAsync(int id)
+    [HttpPost("{id:int} and {userID:int}/dislike")]
+    public async Task<IResult> DislikePostAsync(int id, int userID)
     {
         Post post = await _postRepository.FindPostById(id);
-        post.DislikeCount++;
-        await _postRepository.DisLikeAsync(post);
+        await _postRepository.DisLikeAsync(post, userID);
         return Results.Ok(post);
     }
     
