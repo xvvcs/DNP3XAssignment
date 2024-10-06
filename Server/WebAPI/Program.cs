@@ -22,6 +22,7 @@ builder.Services.AddScoped<IModeratorRepository, ModeratorFileRepository>();
 builder.Services.AddScoped<ISubForumRepository, SubForumFileRepository>();
 
 var app = builder.Build();
+app.MapControllers();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
