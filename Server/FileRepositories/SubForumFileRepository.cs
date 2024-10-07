@@ -61,6 +61,11 @@ public class SubForumFileRepository : ISubForumRepository
         await SaveSubForumsAsync(subForums);
     }
 
+    public Task<SubForum> AddASync(SubForum subForum)
+    {
+        throw new NotImplementedException(); ///TODO
+    }
+
     public async Task UpdateAsync(SubForum subForum)
     {
         List<SubForum> subForums = await LoadSubForumsAsync();

@@ -59,6 +59,15 @@ public class SubForumInMemoryRepository: ISubForumRepository
         return Task.FromResult(subForum);
     }
 
+    public Task<SubForum> AddASync(SubForum subForum)
+    {
+        subForum.Id = subForums.Any()
+            ? subForums.Max(s => s.Id) + 1
+            : 1;
+        subForums.Add(subForum);
+        return Task.FromResult(subForum);
+    }
+
     public Task UpdateAsync(SubForum subForum)
     {
       subForums.Remove(FindSubForum(subForum));

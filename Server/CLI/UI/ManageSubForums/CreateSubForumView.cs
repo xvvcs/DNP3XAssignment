@@ -15,7 +15,7 @@ public class CreateSubForumView
     public async Task createSubForumAsync(string subForumName, string subforumDesc, int userID)
     {
         SubForum subforum = new SubForum(subForumName, subforumDesc, userID);
-        await subForumRepository.AddAsync(subforum);
+        await subForumRepository.AddASync(subforum);
         Console.WriteLine($"Subforum '{subForumName}' was created successfully.");
     }
 }
