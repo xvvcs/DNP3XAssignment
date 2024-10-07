@@ -95,19 +95,19 @@ public class PostsController
     
     //POST https://localhost:7198/posts/{id}/like
     [HttpPost("{id:int} and {userID:int}/like")]
-    public async Task<IResult> LikePostAsync(int id, int userID)
+    public async Task<IResult> LikePostAsync(int id, int userId)
     {
         Post post = await _postRepository.FindPostById(id);
-        await _postRepository.LikeAsync(post, userID);
+        await _postRepository.LikeAsync(post, userId);
         return Results.Ok(post);
     }
     
     //POST https://localhost:7198/posts/{id}/dislike
     [HttpPost("{id:int} and {userID:int}/dislike")]
-    public async Task<IResult> DislikePostAsync(int id, int userID)
+    public async Task<IResult> DislikePostAsync(int id, int userId)
     {
         Post post = await _postRepository.FindPostById(id);
-        await _postRepository.DisLikeAsync(post, userID);
+        await _postRepository.DisLikeAsync(post, userId);
         return Results.Ok(post);
     }
     

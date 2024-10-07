@@ -7,7 +7,9 @@ public class Comment
     public int PostId { get; set; }
     public int UserId { get; set; }
     public int LikeCount { get; set; }
+    public List<int> Like { get; set; } = new List<int>();
     public int DislikeCount { get; set; }
+    public List<int> Dislike { get; set; } = new List<int>();
 
     public Comment() { }
     public Comment(string body, int postID, int userID)
@@ -15,17 +17,23 @@ public class Comment
         Body = body;
         PostId = postID;
         UserId = userID;
-        LikeCount = 0;
-        DislikeCount = 0;
+        LikeCount = Like.Count;
+        DislikeCount = Dislike.Count;
     }
 
-    public Comment(string body, int postID, int userID, int likeCount, int dislikeCount, int id)
+    public Comment(string body, int postID, int userID, int id)
     {
         Id = id;
         Body = body;
         PostId = postID;
         UserId = userID;
-        LikeCount = likeCount;
-        DislikeCount = dislikeCount;
+        LikeCount = Like.Count;
+        DislikeCount = Dislike.Count;
+    }
+    
+    public void updateLikeCount()
+    {
+        LikeCount = Like.Count;
+        DislikeCount = Dislike.Count;
     }
 }

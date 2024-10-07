@@ -108,25 +108,33 @@ public class CommentInMemoryRepository : ICommentRepository
         return comments.AsQueryable();
     }
 
-    public Task LikeAsync(Comment comment)
+    public Task LikeAsync(Comment comment, int userId)
     {
         Comment? getComment = comments.SingleOrDefault(c => c.Id == comment.Id);
         if (getComment is null)
         {
             throw new InvalidOperationException($"Comment with ID '{comment.Id}' not found");
         }
-        getComment.LikeCount++;
+        if (!getComment.Like.Contains(userId))
+        {
+            getComment.Like.Add(userId);
+            getComment.LikeCount = getComment.Like.Count;
+        }
         return Task.CompletedTask;
     }
 
-    public Task DisLikeAsync(Comment comment)
+    public Task DisLikeAsync(Comment comment, int userId)
     {
         Comment? getComment = comments.SingleOrDefault(c => c.Id == comment.Id);
         if (getComment is null)
         {
             throw new InvalidOperationException($"Comment with ID '{comment.Id}' not found");
         }
-        getComment.DislikeCount++;
+        if (!getComment.Dislike.Contains(userId))
+        {
+            getComment.Dislike.Add(userId);
+            getComment.DislikeCount = getComment.Dislike.Count;
+        }
         return Task.CompletedTask;
     }
     

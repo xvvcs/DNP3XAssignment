@@ -44,8 +44,8 @@ public class CommentFileRepository: ICommentRepository
     public async Task<Comment> AddAsync(Comment comment)
     {
         List<Comment> comments = await LoadCommentsAsync();
-        int maxID = comments.Count > 0 ? comments.Max(c => c.Id) : 1;
-        comment.Id = maxID + 1;
+        int maxId = comments.Count > 0 ? comments.Max(c => c.Id) : 1;
+        comment.Id = maxId + 1;
         comments.Add(comment);
         await SaveCommentsAsync(comments);
         return comment;
@@ -97,7 +97,7 @@ public class CommentFileRepository: ICommentRepository
         return filteredComments;
     }
 
-    public async Task LikeAsync(Comment comment)
+    public async Task LikeAsync(Comment comment, int userId)
     {
         List<Comment> comments = await LoadCommentsAsync();
         Comment? getComment = comments.SingleOrDefault(c => c.Id == comment.Id);
@@ -105,11 +105,15 @@ public class CommentFileRepository: ICommentRepository
         {
             throw new InvalidOperationException($"Comment with ID '{comment.Id}' not found");
         }
-        getComment.LikeCount++;
+        if (!getComment.Like.Contains(userId))
+        {
+            getComment.Like.Add(userId);
+            getComment.updateLikeCount();
+        }
         await SaveCommentsAsync(comments);
     }
 
-    public async Task DisLikeAsync(Comment comment)
+    public async Task DisLikeAsync(Comment comment, int userId)
     {
         List<Comment> comments = await LoadCommentsAsync();
         Comment? getComment = comments.SingleOrDefault(c => c.Id == comment.Id);
@@ -117,7 +121,11 @@ public class CommentFileRepository: ICommentRepository
         {
             throw new InvalidOperationException($"Comment with ID '{comment.Id}' not found");
         }
-        getComment.DislikeCount++;
+        if (!getComment.Dislike.Contains(userId))
+        {
+            getComment.Dislike.Add(userId);
+            getComment.updateLikeCount();
+        }
         await SaveCommentsAsync(comments);
     }
 
