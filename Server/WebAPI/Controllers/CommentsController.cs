@@ -9,15 +9,22 @@ namespace WebAPI.Controllers;
 public class CommentsController
 {
     private readonly ICommentRepository _commentRepository;
-    public CommentsController(ICommentRepository commentRepository)
+    private readonly IPostRepository _postRepository;
+    public CommentsController(ICommentRepository commentRepository, IPostRepository postRepository)
     {
         _commentRepository = commentRepository;
+        _postRepository = postRepository;
     }
     
     //POST https://localhost:7198/comments
     [HttpPost]
     public async Task<IResult> AddCommentAsync([FromBody] AddCommentDTO request)
     {
+        Post? existingPost = await _postRepository.FindPostById(request.PostId);
+        if (existingPost == null)
+        {
+            return Results.NotFound($"Post with ID '{request.PostId}' not found.");
+        }
         Comment comment = new Comment
         {
             Body = request.Body,

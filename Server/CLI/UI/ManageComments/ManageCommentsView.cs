@@ -21,7 +21,7 @@ public class ManageCommentsView
     public async Task UpdateComment(int commentID, string newContent)
     {
         Comment existingComment = commentRepository.FindCommentById(commentID).Result;
-        Comment comment = new Comment(newContent, existingComment.PostId, existingComment.UserId, existingComment.LikeCount, existingComment.DislikeCount, commentID);    
+        Comment comment = new Comment(newContent, existingComment.PostId, existingComment.UserId, commentID);    
         await commentRepository.UpdateAsync(comment);
         Console.WriteLine($"Comment with ID {commentID} has been updated.");
     }

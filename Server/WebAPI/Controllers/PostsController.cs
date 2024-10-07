@@ -10,10 +10,12 @@ namespace WebAPI.Controllers;
 public class PostsController
 {
     private readonly IPostRepository _postRepository;
+    private readonly ICommentRepository _commentRepository;
 
-    public PostsController(IPostRepository postRepository)
+    public PostsController(IPostRepository postRepository, ICommentRepository commentRepository)
     {
         _postRepository = postRepository;
+        _commentRepository = commentRepository;
     }
 
     //POST https://localhost:7198/posts
@@ -38,8 +40,18 @@ public class PostsController
     {
         try
         {
-            Post result = await _postRepository.GetSingleAsync(id);
-            return Results.Ok(result);
+            Post? result = await _postRepository.GetSingleAsync(id);
+            if (result == null)
+            {
+                return Results.NotFound($"Post with ID {id} not found.");
+            }
+            List<Comment> comments = await _commentRepository.GetCommentsByPostIdAsync(id);
+            var postWithComments = new
+            {
+                Post = result,
+                Comments = comments
+            };
+            return Results.Ok(postWithComments);
         }
         catch (Exception e)
         {
