@@ -44,6 +44,7 @@ public class PostFileRepository : IPostRepository
         List<Post> posts = await LoadPostsAsync();
         int maxID = posts.Count > 0 ? posts.Max(p => p.Id) : 1;
         post.Id = maxID + 1;
+        
         posts.Add(post);
         await SavePostsAsync(posts);
         return post;
@@ -90,7 +91,7 @@ public class PostFileRepository : IPostRepository
     public async Task LikeAsync(Post post, int userId)
     {
         List<Post> posts = await LoadPostsAsync();
-        Post? postToLike = posts.FirstOrDefault(p => p.Id == post.Id);
+        Post? postToLike = posts.SingleOrDefault(p => p.Id == post.Id);
         if (postToLike is null)
         {
             throw new InvalidOperationException($"Post with ID '{post.Id}' not found.");
@@ -100,32 +101,25 @@ public class PostFileRepository : IPostRepository
             postToLike.Like.Add(userId);
             postToLike.Dislike.Remove(userId);
             postToLike.updateLikeCount();
-            await SavePostsAsync(posts);
+            
         }
-        else
-        {
-            throw new InvalidOperationException($"Post has already been liked by user with ID '{userId}'.");
-        }
+        await SavePostsAsync(posts);
     }
 
     public async Task DisLikeAsync(Post post, int userId)
     {
         List<Post> posts = await LoadPostsAsync();
-        Post? postToDislike = posts.FirstOrDefault(p => p.Id == post.Id);
+        Post? postToDislike = posts.SingleOrDefault(p => p.Id == post.Id);
         if (postToDislike is null)
         {
             throw new InvalidOperationException($"Post with ID '{post.Id}' not found.");
         }
         if (!postToDislike.Dislike.Contains(userId))
         {
-            postToDislike.Dislike.Add(userId);
             postToDislike.Like.Remove(userId);
+            postToDislike.Dislike.Add(userId);
             postToDislike.updateLikeCount();
-            await SavePostsAsync(posts);
         }
-        else
-        {
-            throw new InvalidOperationException($"Post has already been disliked by user with ID '{userId}'.");
-        }
+        await SavePostsAsync(posts);
     }
 }

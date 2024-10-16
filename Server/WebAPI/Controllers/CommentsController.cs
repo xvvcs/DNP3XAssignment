@@ -10,10 +10,12 @@ public class CommentsController
 {
     private readonly ICommentRepository _commentRepository;
     private readonly IPostRepository _postRepository;
-    public CommentsController(ICommentRepository commentRepository, IPostRepository postRepository)
+    private readonly IUserRepository _userRepository;
+    public CommentsController(ICommentRepository commentRepository, IPostRepository postRepository, IUserRepository userRepository)
     {
         _commentRepository = commentRepository;
         _postRepository = postRepository;
+        _userRepository = userRepository;
     }
     
     //POST https://localhost:7198/comments
@@ -21,10 +23,16 @@ public class CommentsController
     public async Task<IResult> AddCommentAsync([FromBody] AddCommentDTO request)
     {
         Post? existingPost = await _postRepository.FindPostById(request.PostId);
+        User? existingUser = await _userRepository.GetSingleAsync(request.UserId);
         if (existingPost == null)
         {
             return Results.NotFound($"Post with ID '{request.PostId}' not found.");
         }
+        if(existingUser == null)
+        {
+            return Results.NotFound($"User with ID '{request.UserId}' not found.");
+        }
+        
         Comment comment = new Comment
         {
             Body = request.Body,
