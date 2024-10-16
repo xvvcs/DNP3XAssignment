@@ -11,17 +11,24 @@ public class PostsController
 {
     private readonly IPostRepository _postRepository;
     private readonly ICommentRepository _commentRepository;
+    private readonly IUserRepository _userRepository;
 
-    public PostsController(IPostRepository postRepository, ICommentRepository commentRepository)
+    public PostsController(IPostRepository postRepository, ICommentRepository commentRepository, IUserRepository userRepository)
     {
         _postRepository = postRepository;
         _commentRepository = commentRepository;
+        _userRepository = userRepository;
     }
 
     //POST https://localhost:7198/posts
     [HttpPost]
     public async Task<IResult> AddPostAsync([FromBody] AddPostsDTO request)
     {
+        User? existingUser = await _userRepository.GetSingleAsync(request.UserId);
+        if (existingUser == null)
+        {
+            return Results.NotFound($"User with ID '{request.UserId}' not found.");
+        }
         Post post = new Post
         {
             Title = request.Title,
@@ -107,19 +114,27 @@ public class PostsController
     
     //POST https://localhost:7198/posts/{id}/like
     [HttpPost("{id:int} and {userID:int}/like")]
-    public async Task<IResult> LikePostAsync(int id, int userId)
+    public async Task<IResult> LikePostAsync([FromRoute] int id, [FromRoute] int userID)
     {
         Post post = await _postRepository.FindPostById(id);
-        await _postRepository.LikeAsync(post, userId);
+        if (post == null)
+        {
+            return Results.NotFound($"Post with ID {id} not found.");
+        }
+        await _postRepository.LikeAsync(post, userID);
         return Results.Ok(post);
     }
     
     //POST https://localhost:7198/posts/{id}/dislike
     [HttpPost("{id:int} and {userID:int}/dislike")]
-    public async Task<IResult> DislikePostAsync(int id, int userId)
+    public async Task<IResult> DislikePostAsync([FromRoute] int id, [FromRoute] int userID)
     {
         Post post = await _postRepository.FindPostById(id);
-        await _postRepository.DisLikeAsync(post, userId);
+        if (post == null)
+        {
+            return Results.NotFound($"Post with ID {id} not found.");
+        }
+        await _postRepository.DisLikeAsync(post, userID);
         return Results.Ok(post);
     }
     

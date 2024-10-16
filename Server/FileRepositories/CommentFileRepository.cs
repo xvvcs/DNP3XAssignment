@@ -108,6 +108,7 @@ public class CommentFileRepository: ICommentRepository
         if (!getComment.Like.Contains(userId))
         {
             getComment.Like.Add(userId);
+            getComment.Dislike.Remove(userId);
             getComment.updateLikeCount();
         }
         await SaveCommentsAsync(comments);
@@ -124,6 +125,7 @@ public class CommentFileRepository: ICommentRepository
         if (!getComment.Dislike.Contains(userId))
         {
             getComment.Dislike.Add(userId);
+            getComment.Like.Remove(userId);
             getComment.updateLikeCount();
         }
         await SaveCommentsAsync(comments);
