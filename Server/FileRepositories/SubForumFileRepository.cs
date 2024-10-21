@@ -1,3 +1,4 @@
+using System.Formats.Tar;
 using System.Text.Json;
 using Entities;
 using RepositoryContracts;
@@ -61,9 +62,15 @@ public class SubForumFileRepository : ISubForumRepository
         await SaveSubForumsAsync(subForums);
     }
 
-    public Task<SubForum> AddASync(SubForum subForum)
+    public async Task<SubForum> AddASync(SubForum subForum)
     {
-        throw new NotImplementedException(); ///TODO
+        List<SubForum> subForums = await LoadSubForumsAsync();
+        int maxID = subForums.Count > 0 ? subForums.Max(sf => sf.Id) : 1;
+        subForum.Id = maxID + 1;
+        
+        subForums.Add(subForum);
+        await SaveSubForumsAsync(subForums);
+        return subForum;
     }
 
     public async Task UpdateAsync(SubForum subForum)
