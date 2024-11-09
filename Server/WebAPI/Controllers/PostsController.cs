@@ -138,5 +138,21 @@ public class PostsController
         return Results.Ok(post);
     }
     
+    // GET https://localhost:7198/posts/{postId}/comments
+    [HttpGet("{postId:int}/comments")]
+    public async Task<IResult> GetCommentsByPostIdAsync([FromRoute] int postId)
+    {
+        try
+        {
+            List<Comment> comments = await _commentRepository.GetCommentsByPostIdAsync(postId);
+            return Results.Ok(comments);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return Results.NotFound(e.Message);
+        }
+    }
+    
     
 }

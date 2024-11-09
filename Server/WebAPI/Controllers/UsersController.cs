@@ -7,11 +7,11 @@ namespace WebAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class UserController
+public class UsersController
 {
     private readonly IUserRepository _userRepository;
     
-    public UserController(IUserRepository userRepository)
+    public UsersController(IUserRepository userRepository)
     {
         _userRepository = userRepository;
     }
@@ -52,7 +52,7 @@ public class UserController
     }
     //PUT https://localhost:7198/users/{id}
     [HttpPut("{id:int}")]
-    public async Task<IResult> UpdatePostAsync([FromRoute] int id, [FromBody] ReplaceUserDTO request)
+    public async Task<IResult> UpdateUserAsync([FromRoute] int id, [FromBody] ReplaceUserDTO request)
     {
         User user = new User()
         {
@@ -61,7 +61,7 @@ public class UserController
             Id = id
         };
         await _userRepository.UpdateAsync(user);
-        return Results.Ok();
+        return Results.Ok(user);
     }
     //GET https://localhost:7198/users
     [HttpGet]

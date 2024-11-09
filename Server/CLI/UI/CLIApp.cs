@@ -5,10 +5,6 @@ using CLI.UI.ManageSubForums;
 using CLI.UI.ManageUsers;
 using RepositoryContracts;
 
-//Optional TODO: Create Log In and Log Out functionality
-//Optional TODO: Fix likes and dislikes, so you cannot like something infinitely
-
-
 namespace CLI.UI
 {
     public class CliApp
@@ -17,7 +13,7 @@ namespace CLI.UI
         private readonly ListPostsView _listPostsView;
         private readonly SinglePostView _singlePostView;
         private readonly ManagePostsView _managePostsView;
-        
+
         private readonly CreateCommentsView _createCommentsView;
         private readonly ListCommentsView _listCommentsView;
         private readonly SingleCommentView _singleCommentView;
@@ -27,52 +23,50 @@ namespace CLI.UI
         private readonly ListUsersView _listUsersView;
         private readonly SingleUserView _singleUserView;
         private readonly ManageUsersView _manageUsersView;
-        
+
         private readonly CreateModeratorView _createModeratorView;
         private readonly ListModeratorsView _listModeratorsView;
         private readonly SingleModeratorView _singleModeratorView;
         private readonly ManageModeratorsView _manageModeratorsView;
-        
+
         private readonly CreateSubForumView _createSubForumView;
         private readonly ListSubForumsView _listSubForumsView;
         private readonly SingleSubForumView _singleSubForumView;
         private readonly ManageSubForumsView _manageSubForumsView;
 
         public CliApp(
-            IUserRepository userRepository, 
-            ICommentRepository commentRepository, 
+            IUserRepository userRepository,
+            ICommentRepository commentRepository,
             IPostRepository postRepository,
             IModeratorRepository moderatorRepository,
             ISubForumRepository subForumRepository)
         {
-            
             _createPostView = new CreatePostView(postRepository);
             _listPostsView = new ListPostsView(postRepository);
             _singlePostView = new SinglePostView(postRepository, commentRepository);
             _managePostsView = new ManagePostsView(postRepository);
 
-            
             _createCommentsView = new CreateCommentsView(commentRepository);
             _listCommentsView = new ListCommentsView(commentRepository);
             _singleCommentView = new SingleCommentView(commentRepository);
             _manageCommentsView = new ManageCommentsView(commentRepository);
-            
+
             _createUserView = new CreateUserView(userRepository);
             _listUsersView = new ListUsersView(userRepository);
             _singleUserView = new SingleUserView(userRepository);
             _manageUsersView = new ManageUsersView(userRepository);
-            
+
             _createModeratorView = new CreateModeratorView(moderatorRepository);
             _listModeratorsView = new ListModeratorsView(moderatorRepository, userRepository, subForumRepository);
             _singleModeratorView = new SingleModeratorView(moderatorRepository, userRepository);
             _manageModeratorsView = new ManageModeratorsView(moderatorRepository);
-            
+
             _createSubForumView = new CreateSubForumView(subForumRepository);
             _listSubForumsView = new ListSubForumsView(subForumRepository, moderatorRepository, userRepository);
             _singleSubForumView = new SingleSubForumView(subForumRepository, moderatorRepository);
             _manageSubForumsView = new ManageSubForumsView(subForumRepository);
         }
-        
+
         public async Task StartAsync()
         {
             bool exit = false;
@@ -140,22 +134,30 @@ namespace CLI.UI
                     if (int.TryParse(Console.ReadLine(), out int postId))
                     {
                         await _singlePostView.DisplayPostAsync(postId);
-                        
+
                         Console.WriteLine("\n--- Post Interaction ---");
                         Console.WriteLine("1. Like Post");
                         Console.WriteLine("2. Dislike Post");
                         Console.WriteLine("0. Back to Main Menu");
                         Console.Write("Choose an option: ");
-                        var interactionInput = Console.ReadLine();          
+                        var interactionInput = Console.ReadLine();
                         switch (interactionInput)
                         {
                             case "1":
-                                await _managePostsView.LikePostAsync(postId);
-                                Console.WriteLine("You liked the post.");
+                                Console.Write("Enter User ID: ");
+                                if (int.TryParse(Console.ReadLine(), out int userID))
+                                {
+                                    await _managePostsView.LikePostAsync(postId, userID);
+                                    Console.WriteLine("You liked the post.");
+                                }
                                 break;
                             case "2":
-                                await _managePostsView.DislikePostAsync(postId);
-                                Console.WriteLine("You disliked the post.");
+                                Console.Write("Enter User ID: ");
+                                if (int.TryParse(Console.ReadLine(), out int userIDresult))
+                                {
+                                    await _managePostsView.DislikePostAsync(postId, userIDresult);
+                                    Console.WriteLine("You disliked the post.");
+                                }
                                 break;
                             case "0":
                                 await StartAsync();
@@ -177,7 +179,7 @@ namespace CLI.UI
                         await _createPostView.addPostAsync(body, title, userId);
                     }
                     break;
-                case "4": 
+                case "4":
                     Console.Write("Enter Post ID to Update: ");
                     if (int.TryParse(Console.ReadLine(), out int postToUpdateId))
                     {
@@ -483,6 +485,6 @@ namespace CLI.UI
             }
 
         }
-        
+
     }
 }

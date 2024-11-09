@@ -1,0 +1,106 @@
+@page "/posts"
+@using DTOs.Posts
+@inject Blazor.Services.IPostService PostService
+
+<h3 class="text-center my-4">All Posts</h3>
+
+<div class="container">
+    <div class="row">
+        @if (posts == null)
+        {
+            <p>Loading...</p>
+        }
+        else if (!posts.Any())
+        {
+            <p>No posts available.</p>
+        }
+        else
+        {
+            @foreach (var post in posts)
+            {
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">@post.Title</h5>
+                            <p class="card-text">@post.Body</p>
+                            <p class="text-muted">Posted by: @post.UserId</p>
+                            <button class="btn btn-link" @onclick="() => ToggleComments(post.Id)">View Comments</button>
+                            <div class="comments mt-3" style="display: @(post.ShowComments ? "block" : "none")">
+                                @if (post.Comments == null)
+                                {
+                                    <p>Loading comments...</p>
+                                }
+                                else if (!post.Comments.Any())
+                                {
+                                    <p>No comments available.</p>
+                                }
+                                else
+                                {
+                                    @foreach (var comment in post.Comments)
+                                    {
+                                        <div class="card mt-2">
+                                            <div class="card-body">
+                                                <p class="card-text">@comment.Body</p>
+                                                <p class="text-muted">Commented by: @comment.UserId</p>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                                <div class="mt-3">
+                                    <textarea class="form-control" @bind="newComment" placeholder="Write a comment..."></textarea>
+                                    <button class="btn btn-primary mt-2" @onclick="() => AddComment(post.Id)">Add Comment</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@code {
+    private List<PostDTO>? posts;
+    private const int UserId = 3; // Hardcoded user ID
+    private string newComment = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        posts = await PostService.GetPostsAsync() as List<PostDTO>;
+    }
+
+    private async Task ToggleComments(int postId)
+    {
+        var post = posts?.FirstOrDefault(p => p.Id == postId);
+        if (post != null)
+        {
+            if (post.Comments == null)
+            {
+                post.Comments = await PostService.GetCommentsAsync(postId);
+            }
+            post.ShowComments = !post.ShowComments;
+        }
+    }
+
+    private async Task AddComment(int postId)
+    {
+        if (!string.IsNullOrWhiteSpace(newComment))
+        {
+            var comment = new CommentDTO
+            {
+                Body = newComment,
+                UserId = UserId,
+                PostId = postId
+            };
+
+            await PostService.AddCommentAsync(comment);
+            newComment = string.Empty;
+
+            var post = posts?.FirstOrDefault(p => p.Id == postId);
+            if (post != null)
+            {
+                post.Comments = await PostService.GetCommentsAsync(postId);
+            }
+        }
+    }
+}

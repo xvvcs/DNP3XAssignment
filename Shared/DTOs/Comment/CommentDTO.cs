@@ -1,8 +1,9 @@
 namespace DTOs.Posts;
 
-public class ReplacePostsDTO
+public class CommentDTO
 {
-    public string Title { get; set; }
     public string Body { get; set; }
+    public int PostId { get; set; }
     public int UserId { get; set; }
+    public int Id { get; set; }
 }

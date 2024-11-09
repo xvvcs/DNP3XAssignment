@@ -1,0 +1,58 @@
+@page "/create-post"
+@using DTOs.Posts
+@inject Blazor.Services.IPostService PostService
+@inject NavigationManager Navigation
+
+<h3 class="text-center my-4">Create a New Post</h3>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <EditForm Model="newPost" OnValidSubmit="HandleValidSubmit">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary class="text-danger" />
+
+                        <div class="mb-3">
+                            <label class="form-label">User ID</label>
+                            <InputNumber @bind-Value="newPost.UserId" class="form-control" placeholder="Enter your user ID" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Title</label>
+                            <InputText @bind-Value="newPost.Title" class="form-control" placeholder="Enter post title" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Content</label>
+                            <InputTextArea @bind-Value="newPost.Body" class="form-control" rows="5" placeholder="Write your post content here..." />
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Create Post</button>
+                    </EditForm>
+
+                    @if (errorMessage != null)
+                    {
+                        <div class="alert alert-danger mt-3">@errorMessage</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private PostDTO newPost = new PostDTO();
+    private string? errorMessage;
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            await PostService.AddPostAsync(newPost);
+            Navigation.NavigateTo("/posts");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+}

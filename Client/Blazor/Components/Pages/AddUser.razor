@@ -1,0 +1,46 @@
+@page "/add-user"
+@using DTOs.Posts
+@inject Blazor.Services.IUserService UserService
+
+<h3 class="text-center my-4">Add User</h3>
+
+<div class="container">
+    <EditForm Model="newUser" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary class="text-danger" />
+
+        <div class="mb-3">
+            <label class="form-label">Username:</label>
+            <InputText @bind-Value="newUser.Username" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Password:</label>
+            <InputText @bind-Value="newUser.Password" type="password" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-primary">Add User</button>
+    </EditForm>
+
+    @if (errorMessage != null)
+    {
+        <div class="alert alert-danger mt-3">@errorMessage</div>
+    }
+</div>
+
+@code {
+    private UserDTO newUser = new UserDTO();
+    private string? errorMessage;
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            await UserService.AddUserAsync(newUser);
+            newUser = new UserDTO();
+            errorMessage = "User added successfully.";
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+}
