@@ -1,4 +1,6 @@
-﻿@page "/subforum-management"
+﻿@attribute [Authorize]
+@page "/subforum-management"
+@using System.Security.Claims
 @using Blazor.Services
 @using DTOs.SubForum
 @using DTOs.Posts
@@ -85,7 +87,8 @@
 </div>
 
 @code {
-    private SubforumDTO newSubforum = new SubforumDTO();
+    private int userId;
+    private AddSubForumDTO newSubforum = new AddSubForumDTO();
     private SubforumDTO editSubforum = new SubforumDTO();
     private int newPostId;
     private string? errorMessage;
@@ -93,10 +96,22 @@
     private IEnumerable<PostDTO> subforumPosts = new List<PostDTO>();
     private int? expandedSubforumId;
     private bool isEditing = false;
+    [CascadingParameter] public Task<AuthenticationState> State { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         subforums = await SubforumService.GetSubforumsAsync();
+        AuthenticationState authenticationState = await State;
+        ClaimsPrincipal claimsPrincipal = authenticationState.User;
+        if(claimsPrincipal.Identity is null || !claimsPrincipal.Identity.IsAuthenticated)
+        {
+            return;
+        }
+        string? userName = claimsPrincipal.Identity?.Name;
+        IEnumerable<Claim> claims = claimsPrincipal.Claims;
+        string userIdAsString = claims.Single(c => c.Type == "Id").Value;
+        userId = int.Parse(userIdAsString);
+        newSubforum.UserId = userId;
     }
 
     private async Task HandleAddSubforum()
@@ -104,7 +119,7 @@
         try
         {
             await SubforumService.AddSubforumAsync(newSubforum);
-            newSubforum = new SubforumDTO();
+            newSubforum = new AddSubForumDTO { UserId = userId };
             errorMessage = "Subforum added successfully.";
             subforums = await SubforumService.GetSubforumsAsync();
         }

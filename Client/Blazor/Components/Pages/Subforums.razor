@@ -1,4 +1,5 @@
-﻿@page "/subforums"
+﻿@attribute [Authorize]
+@page "/subforums"
 @using DTOs.SubForum
 @using DTOs.Posts
 @inject Blazor.Services.ISubforumService SubforumService

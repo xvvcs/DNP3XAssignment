@@ -5,7 +5,7 @@ namespace Blazor.Services;
 
 public interface ISubforumService
 {
-    public Task<SubforumDTO> AddSubforumAsync(SubforumDTO subforum);
+    public Task<SubforumDTO> AddSubforumAsync(AddSubForumDTO subforum);
     public Task<SubforumDTO> GetSubforumAsync(int id);
     public Task<SubforumDTO> UpdateSubforumAsync(SubforumDTO subforum);
     public Task DeleteSubforumAsync(int id);

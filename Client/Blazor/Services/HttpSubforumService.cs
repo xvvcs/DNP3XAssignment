@@ -12,7 +12,7 @@ public class HttpSubforumService : ISubforumService
     {
         _client = client;
     }
-    public async Task<SubforumDTO> AddSubforumAsync(SubforumDTO subforum)
+    public async Task<SubforumDTO> AddSubforumAsync(AddSubForumDTO subforum)
     {
         HttpResponseMessage httpResponse = await _client.PostAsJsonAsync("subforums", subforum);
         string response = await httpResponse.Content.ReadAsStringAsync();
