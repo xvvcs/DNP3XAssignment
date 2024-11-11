@@ -11,4 +11,6 @@ public interface ISubForumRepository
     Task<SubForum> GetSingleAsync(int id);
     IQueryable<SubForum> GetMany();
     public Task<int> FindSubForumCreator(int subForumID);
+    Task<IEnumerable<Post>> GetPostsBySubforumAsync(int subforumId);
+    Task AddPostToSubforumAsync(int subforumId, int postId);
 }

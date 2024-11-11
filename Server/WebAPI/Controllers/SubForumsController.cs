@@ -25,7 +25,6 @@ public class SubForumsController : ControllerBase
             Title = request.Title,
             Description = request.Description,
             UserId = request.UserId,
-            PostId = request.PostId
         };
         await _subForumRepository.AddASync(subForum);
         return Results.Created($"subforums/{subForum.Id}", subForum);
@@ -109,5 +108,31 @@ public class SubForumsController : ControllerBase
         }
 
         return Results.Ok(new { CreatorId = creatorId });
+    }
+    // GET https://localhost:7198/subforums/{id}/posts
+    [HttpGet("{id:int}/posts")]
+    public async Task<IResult> GetPostsBySubforumAsync([FromRoute] int id)
+    {
+        var posts = await _subForumRepository.GetPostsBySubforumAsync(id);
+        if (posts == null || !posts.Any())
+        {
+            return Results.NotFound($"No posts found for SubForum with ID {id}.");
+        }
+
+        return Results.Ok(posts);
+    }
+    // POST https://localhost:7198/subforums/{subforumId}/posts/{postId}
+    [HttpPost("{subforumId:int}/posts/{postId:int}")]
+    public async Task<IResult> AddPostToSubforumAsync([FromRoute] int subforumId, [FromRoute] int postId)
+    {
+        try
+        {
+            await _subForumRepository.AddPostToSubforumAsync(subforumId, postId);
+            return Results.Ok($"Post with ID {postId} has been added to SubForum with ID {subforumId}.");
+        }
+        catch (Exception e)
+        {
+            return Results.BadRequest(e.Message);
+        }
     }
 }

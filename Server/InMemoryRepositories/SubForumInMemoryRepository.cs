@@ -5,6 +5,7 @@ using RepositoryContracts;
 public class SubForumInMemoryRepository: ISubForumRepository
 {
     private List<SubForum> subForums = new List<SubForum>();
+    private readonly List<Post> posts = new();
 
     public SubForumInMemoryRepository()
     {
@@ -95,5 +96,22 @@ public class SubForumInMemoryRepository: ISubForumRepository
     public Task<SubForum> GetSingleAsync(int id)
     {
         return Task.FromResult(FindSubForumById(id));
+    }
+    public async Task<IEnumerable<Post>> GetPostsBySubforumAsync(int subforumId)
+    {
+        var subForum = subForums.FirstOrDefault(sf => sf.Id == subforumId);
+        if (subForum == null)
+        {
+            throw new InvalidOperationException($"SubForum with ID '{subforumId}' not found.");
+        }
+
+        var subforumPosts = posts.Where(p => subForum.PostIds.Contains(p.Id));
+        return await Task.FromResult(subforumPosts);
+    }
+    public async Task AddPostToSubforumAsync(int subforumId, int postId)
+    {
+        var subForum = FindSubForumById(subforumId);
+        subForum.AddPost(postId);
+        await Task.CompletedTask;
     }
 }

@@ -9,6 +9,7 @@ namespace FileRepositories;
 public class SubForumFileRepository : ISubForumRepository
 {
     private readonly string _filePath = "subforums.json";
+    private readonly string _postsFilePath = "posts.json";
 
     public SubForumFileRepository()
     {
@@ -16,12 +17,21 @@ public class SubForumFileRepository : ISubForumRepository
         {
             File.WriteAllText(_filePath, "[]");
         }
+        if (!File.Exists(_postsFilePath))
+        {
+            File.WriteAllText(_postsFilePath, "[]");
+        }
     }
 
     private async Task<List<SubForum>> LoadSubForumsAsync()
     {
         string subForumsAsJson = await File.ReadAllTextAsync(_filePath);
         return JsonSerializer.Deserialize<List<SubForum>>(subForumsAsJson);
+    }
+    private async Task<List<Post>> LoadPostsAsync()
+    {
+        string postsAsJson = await File.ReadAllTextAsync(_postsFilePath);
+        return JsonSerializer.Deserialize<List<Post>>(postsAsJson);
     }
 
     private async Task SaveSubForumsAsync(List<SubForum> subForums)
@@ -102,6 +112,35 @@ public class SubForumFileRepository : ISubForumRepository
             throw new InvalidOperationException($"SubForum with ID '{subForumID}' not found");
         }
         return subForum.UserId;
+    }
+    public async Task<IEnumerable<Post>> GetPostsBySubforumAsync(int subforumId)
+    {
+        List<SubForum> subForums = await LoadSubForumsAsync();
+        SubForum subForum = subForums.SingleOrDefault(sf => sf.Id == subforumId);
+        if (subForum == null)
+        {
+            throw new InvalidOperationException($"SubForum with ID '{subforumId}' not found.");
+        }
+
+        List<Post> posts = await LoadPostsAsync();
+        var subforumPosts = posts.Where(p => subForum.PostIds.Contains(p.Id));
+        return subforumPosts;
+    }
+
+    public async Task AddPostToSubforumAsync(int subforumId, int postId)
+    {
+        List<SubForum> subForums = await LoadSubForumsAsync();
+        SubForum subForum = subForums.SingleOrDefault(sf => sf.Id == subforumId);
+        if (subForum == null)
+        {
+            throw new InvalidOperationException($"SubForum with ID '{subforumId}' not found.");
+        }
+
+        if (!subForum.PostIds.Contains(postId))
+        {
+            subForum.PostIds.Add(postId);
+            await SaveSubForumsAsync(subForums);
+        }
     }
    
 }

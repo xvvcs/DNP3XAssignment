@@ -6,8 +6,8 @@ public class SubForum
     public string Title { get; set; }
     public string Description { get; set; }
     public int UserId { get; set; }
-    public int PostId { get; set; }
-
+    
+    public List<int> PostIds { get; set; } = new List<int>();
     
     public SubForum() { }
     public SubForum(string title, string description, int userId)
@@ -15,7 +15,14 @@ public class SubForum
         Title = title;
         Description = description;
         UserId = userId;
-        PostId = 0; // Initial post ID, will be set when the first post is created in the forum.
+        PostIds = new List<int>();
+    }
+    public void AddPost(int postId)
+    {
+        if (!PostIds.Contains(postId))
+        {
+            PostIds.Add(postId);
+        }
     }
 
 }
