@@ -27,7 +27,7 @@
 </div>
 
 @code {
-    private UserDTO newUser = new UserDTO();
+    private AddUserDTO newUser = new AddUserDTO();
     private string? errorMessage;
 
     private async Task HandleValidSubmit()
@@ -35,7 +35,7 @@
         try
         {
             await UserService.AddUserAsync(newUser);
-            newUser = new UserDTO();
+            newUser = new AddUserDTO();
             errorMessage = "User added successfully.";
         }
         catch (Exception ex)

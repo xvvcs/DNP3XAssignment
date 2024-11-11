@@ -26,10 +26,6 @@
                                 <label class="form-label">Username:</label>
                                 <InputText @bind-Value="editingUser.Username" class="form-control" />
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">Password:</label>
-                                <InputText @bind-Value="editingUser.Password" type="password" class="form-control" />
-                            </div>
                             <button type="submit" class="btn btn-primary me-2">Update User</button>
                             <button type="button" class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
                         </EditForm>
@@ -70,7 +66,6 @@
         editingUser = new UserDTO()
         {
             Username = user.Username,
-            Password = user.Password,
             Id = user.Id
         };
     }

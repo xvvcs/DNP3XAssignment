@@ -1,0 +1,65 @@
+@page "/register"
+@using Blazor.Services
+@inject AuthenticationStateProvider Auth
+@inject NavigationManager NavigationManager
+
+<div class="register-container">
+    <div class="register-card">
+        <h3 class="text-center my-4">Create Account</h3>
+        <EditForm Model="registerModel" OnValidSubmit="RegisterAsync" Context="editContext">
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" />
+
+            <div class="mb-3">
+                <label class="form-label">Username:</label>
+                <InputText @bind-Value="registerModel.Username" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Password:</label>
+                <InputText @bind-Value="registerModel.Password" type="password" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Confirm Password:</label>
+                <InputText @bind-Value="registerModel.ConfirmPassword" type="password" class="form-control" />
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Register</button>
+        </EditForm>
+
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="alert alert-danger mt-3">@errorMessage</div>
+        }
+    </div>
+</div>
+
+@code {
+    private RegisterModel registerModel = new RegisterModel();
+    private string errorMessage = "";
+
+    private async Task RegisterAsync()
+    {
+        if (registerModel.Password != registerModel.ConfirmPassword)
+        {
+            errorMessage = "Passwords do not match.";
+            return;
+        }
+
+        try
+        {
+            await ((AuthProvider)Auth).Register(registerModel.Username, registerModel.Password);
+            NavigationManager.NavigateTo("/");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            errorMessage = ex.Message;
+        }
+    }
+
+    public class RegisterModel
+    {
+        public string Username { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+        public string ConfirmPassword { get; set; } = string.Empty;
+    }
+}

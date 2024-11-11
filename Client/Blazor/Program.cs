@@ -1,5 +1,6 @@
 using Blazor.Components;
 using Blazor.Services;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,7 @@ builder.Services.AddScoped<IUserService, HttpUserService>();
 builder.Services.AddScoped<IPostService, HttpPostService>();
 builder.Services.AddScoped<ISubforumService, HttpSubforumService>();
 //builder.Services.AddScoped<IModeratorService, HttpModeratorService>();
+builder.Services.AddScoped<AuthenticationStateProvider, AuthProvider>();
 
 
 var app = builder.Build();

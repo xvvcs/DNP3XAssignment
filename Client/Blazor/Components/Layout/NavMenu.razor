@@ -1,6 +1,23 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@using Blazor.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">Blazor</a>
+        <a class="navbar-brand" href="">Home</a>
+        @if (isLoggedIn)
+        {
+            <NavLink class="nav-link text-light" href="" @onclick="Logout">
+                <span class="bi bi-box-arrow-right" aria-hidden="true"></span> Logout
+            </NavLink>
+        }
+        else
+        {
+            <NavLink class="nav-link text-light" href="login">
+                <span class="bi bi-box-arrow-in-right" aria-hidden="true"></span> Login
+            </NavLink>
+        }
     </div>
 </div>
 
@@ -44,5 +61,60 @@
                 <span class="bi bi-pencil-square-nav-menu" aria-hidden="true"></span> Post Management
             </NavLink>
         </div>
+        
+        <div class="nav-item px-3">
+        <NavLink class="nav-link text-light" href="register">
+            <span class="bi bi-person-plus" aria-hidden="true"></span> Register
+        </NavLink>
+        </div>
     </nav>
 </div>
+
+@if (!string.IsNullOrEmpty(notificationMessage))
+{
+    <div class="alert @notificationClass mt-3">@notificationMessage</div>
+}
+
+@code {
+    private bool isLoggedIn;
+    private string notificationMessage = "";
+    private string notificationClass = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        AuthenticationStateProvider.AuthenticationStateChanged += OnAuthenticationStateChanged;
+        await UpdateLoginState();
+    }
+
+    private async Task UpdateLoginState()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        isLoggedIn = authState.User.Identity != null && authState.User.Identity.IsAuthenticated;
+        StateHasChanged();
+    }
+
+    private void OnAuthenticationStateChanged(Task<AuthenticationState> task)
+    {
+        InvokeAsync(async () =>
+        {
+            await UpdateLoginState();
+            notificationMessage = isLoggedIn ? "Successfully logged in!" : "Logged out.";
+            notificationClass = isLoggedIn ? "alert-success" : "alert-info";
+        });
+    }
+
+    private void Logout()
+    {
+        ((AuthProvider)AuthenticationStateProvider).Logout();
+        NavigationManager.NavigateTo("/");
+        notificationMessage = "Successfully logged out.";
+        notificationClass = "alert-info";
+        isLoggedIn = false;
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        AuthenticationStateProvider.AuthenticationStateChanged -= OnAuthenticationStateChanged;
+    }
+}

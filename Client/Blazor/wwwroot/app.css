@@ -49,3 +49,152 @@ h1:focus {
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
 }
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f6f7f8;
+}
+
+.login-card {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-card h3 {
+    color: #ff4500;
+}
+
+.login-card .form-label {
+    font-weight: bold;
+}
+
+.login-card .btn-primary {
+    background-color: #ff4500;
+    border-color: #ff4500;
+}
+
+.login-card .btn-primary:hover {
+    background-color: #e03d00;
+    border-color: #e03d00;
+}
+.home-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f6f7f8;
+}
+
+.home-card {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+    text-align: center;
+}
+
+.home-card h1 {
+    color: #ff4500;
+    margin-bottom: 1rem;
+}
+
+.home-card p {
+    color: #333333;
+    margin-bottom: 1.5rem;
+}
+
+.auth-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.auth-buttons .btn {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+}
+
+.register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #dae0e6;
+}
+
+.register-card {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.register-card h3 {
+    color: #ff4500;
+    margin-bottom: 1.5rem;
+}
+
+.register-card .form-label {
+    font-weight: bold;
+    color: #333333;
+}
+
+.register-card .form-control {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.register-card .btn-primary {
+    background-color: #ff4500;
+    border-color: #ff4500;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+}
+
+.register-card .btn-primary:hover {
+    background-color: #e03d00;
+    border-color: #e03d00;
+}
+
+.register-card .alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    margin-top: 1rem;
+}
+.navbar {
+    width: 100%;
+}
+
+.alert {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1000;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}

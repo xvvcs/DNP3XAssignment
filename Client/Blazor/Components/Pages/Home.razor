@@ -1,7 +1,37 @@
 ﻿@page "/"
+@inject NavigationManager NavigationManager
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="home-container">
+    <div class="home-card">
+        <h1>Welcome to Reddit Clone</h1>
+        <p>This is a clone of the popular Reddit platform where you can create posts, comment, and interact with other users.</p>
+        <AuthorizeView>
+            <Authorized>
+                <h3>Hello, @context.User.Identity.Name!</h3>
+                <p>Thank you for being a part of our community. Feel free to explore and engage with the content.</p>
+            </Authorized>
+            <NotAuthorized>
+                <h3>Hello, Stranger!</h3>
+                <p>Please log in or create an account to join our community and start interacting with posts.</p>
+                <div class="auth-buttons">
+                    <button class="btn btn-primary" @onclick="NavigateToLogin">Log In</button>
+                    <button class="btn btn-secondary" @onclick="NavigateToRegister">Create Account</button>
+                </div>
+            </NotAuthorized>
+        </AuthorizeView>
+    </div>
+</div>
 
-Welcome to your new app.
+@code {
+    private void NavigateToLogin()
+    {
+        NavigationManager.NavigateTo("/login");
+    }
+
+    private void NavigateToRegister()
+    {
+        NavigationManager.NavigateTo("/register");
+    }
+}

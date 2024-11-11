@@ -81,4 +81,20 @@ public class UsersController
         return Results.Ok(users);
 
     }
+    
+    //GET https://localhost:7198/users/username
+    [HttpGet("by-username")]
+    public async Task<IResult> GetByUsernameAsync([FromQuery] string username)
+    {
+        try
+        {
+            User result = await _userRepository.GetByUsernameAsync(username);
+            return Results.Ok(result);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return Results.NotFound(e.Message);
+        }
+    }
 }

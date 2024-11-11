@@ -12,7 +12,7 @@ public class HttpUserService : IUserService
         this.client = client;
     }
 
-    public async Task<UserDTO> AddUserAsync(UserDTO user)
+    public async Task<AddUserDTO> AddUserAsync(AddUserDTO user)
     {
         HttpResponseMessage httpResponse = await client.PostAsJsonAsync("users", user);
         string response = await httpResponse.Content.ReadAsStringAsync();
@@ -20,7 +20,7 @@ public class HttpUserService : IUserService
         {
             throw new Exception(response);
         }
-        return JsonSerializer.Deserialize<UserDTO>(response, new JsonSerializerOptions
+        return JsonSerializer.Deserialize<AddUserDTO>(response, new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         }) ?? throw new InvalidOperationException();
