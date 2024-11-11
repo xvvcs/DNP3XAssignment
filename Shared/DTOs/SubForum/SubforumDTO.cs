@@ -2,9 +2,10 @@
 
 public class SubforumDTO
 {
+    public int Id { get; set; }
     public string Title { get; set; }
     public string Description { get; set; }
     public int UserId { get; set; }
-    public int PostId { get; set; }
-    public int Id{ get; set; }
+    
+    public List<int> PostIds { get; set; } = new List<int>();
 }
