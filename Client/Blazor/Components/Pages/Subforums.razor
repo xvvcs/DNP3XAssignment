@@ -1,0 +1,62 @@
+﻿@page "/subforums"
+@using DTOs.SubForum
+@using DTOs.Posts
+@inject Blazor.Services.ISubforumService SubforumService
+
+<h3 class="text-center my-4">Subforums</h3>
+
+<div class="container">
+    @if (subforums == null)
+    {
+        <p>Loading...</p>
+    }
+    else
+    {
+        @foreach (var subforum in subforums)
+        {
+            <div class="card my-2">
+                <div class="card-body">
+                    <h5 class="card-title">@subforum.Title</h5>
+                    <p class="card-text">@subforum.Description</p>
+                    <button class="btn btn-link" @onclick="() => TogglePosts(subforum.Id)">View Posts</button>
+                    @if (expandedSubforumId == subforum.Id)
+                    {
+                        <ul class="list-group list-group-flush">
+                            @foreach (var post in subforumPosts)
+                            {
+                                <li class="list-group-item">
+                                    @post.Title
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@code {
+    private IEnumerable<SubforumDTO> subforums = new List<SubforumDTO>();
+    private IEnumerable<PostDTO> subforumPosts = new List<PostDTO>();
+    private int? expandedSubforumId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        subforums = await SubforumService.GetSubforumsAsync();
+    }
+
+    private async Task TogglePosts(int subforumId)
+    {
+        if (expandedSubforumId == subforumId)
+        {
+            expandedSubforumId = null;
+            subforumPosts = new List<PostDTO>();
+        }
+        else
+        {
+            expandedSubforumId = subforumId;
+            subforumPosts = await SubforumService.GetPostsBySubforumAsync(subforumId);
+        }
+    }
+}

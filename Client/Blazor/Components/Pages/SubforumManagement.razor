@@ -1,0 +1,215 @@
+﻿@page "/subforum-management"
+@using Blazor.Services
+@using DTOs.SubForum
+@using DTOs.Posts
+@inject Blazor.Services.ISubforumService SubforumService
+@inject Blazor.Services.IPostService HttpPostService
+
+<h3 class="text-center my-4">Subforum Management</h3>
+
+<div class="container">
+    <h4>Add New Subforum</h4>
+    <EditForm Model="newSubforum" OnValidSubmit="HandleAddSubforum">
+        <div class="mb-3">
+            <label class="form-label">Title:</label>
+            <InputText @bind-Value="newSubforum.Title" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Description:</label>
+            <InputTextArea @bind-Value="newSubforum.Description" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-primary">Add Subforum</button>
+    </EditForm>
+
+    @if (isEditing)
+    {
+        <div class="mt-4">
+            <h4>Edit Subforum</h4>
+            <EditForm Model="editSubforum" OnValidSubmit="HandleUpdateSubforum">
+                <div class="mb-3">
+                    <label class="form-label">Title:</label>
+                    <InputText @bind-Value="editSubforum.Title" class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Description:</label>
+                    <InputTextArea @bind-Value="editSubforum.Description" class="form-control" />
+                </div>
+                <button type="submit" class="btn btn-primary">Update Subforum</button>
+                <button type="button" class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
+            </EditForm>
+        </div>
+    }
+
+    @if (errorMessage != null)
+    {
+        <div class="alert alert-danger mt-3">@errorMessage</div>
+    }
+
+    <hr />
+
+    @if (subforums == null)
+    {
+        <p>Loading...</p>
+    }
+    else
+    {
+        @foreach (var subforum in subforums)
+        {
+            <div class="card my-2">
+                <div class="card-body">
+                    <h5 class="card-title">@subforum.Title</h5>
+                    <p class="card-text">@subforum.Description</p>
+                    <button class="btn btn-warning" @onclick="() => EditSubforum(subforum)">Edit</button>
+                    <button class="btn btn-danger" @onclick="() => DeleteSubforum(subforum.Id)">Delete</button>
+                    <button class="btn btn-link" @onclick="() => TogglePosts(subforum.Id)">Manage Posts</button>
+                    @if (expandedSubforumId == subforum.Id)
+                    {
+                        <ul class="list-group list-group-flush">
+                            @foreach (var post in subforumPosts)
+                            {
+                                <li class="list-group-item">
+                                    @post.Title
+                                    <button class="btn btn-danger btn-sm float-end" @onclick="() => DeletePost(subforum.Id, post.Id)">Delete</button>
+                                </li>
+                            }
+                        </ul>
+                        <div class="mt-3">
+                            <input type="number" @bind="newPostId" placeholder="New Post ID" class="form-control" />
+                            <button class="btn btn-primary mt-2" @onclick="() => AddPost(subforum.Id)">Add Post</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@code {
+    private SubforumDTO newSubforum = new SubforumDTO();
+    private SubforumDTO editSubforum = new SubforumDTO();
+    private int newPostId;
+    private string? errorMessage;
+    private IEnumerable<SubforumDTO> subforums = new List<SubforumDTO>();
+    private IEnumerable<PostDTO> subforumPosts = new List<PostDTO>();
+    private int? expandedSubforumId;
+    private bool isEditing = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        subforums = await SubforumService.GetSubforumsAsync();
+    }
+
+    private async Task HandleAddSubforum()
+    {
+        try
+        {
+            await SubforumService.AddSubforumAsync(newSubforum);
+            newSubforum = new SubforumDTO();
+            errorMessage = "Subforum added successfully.";
+            subforums = await SubforumService.GetSubforumsAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+
+    private async Task HandleUpdateSubforum()
+    {
+        try
+        {
+            await SubforumService.UpdateSubforumAsync(editSubforum);
+            editSubforum = new SubforumDTO();
+            isEditing = false;
+            errorMessage = "Subforum updated successfully.";
+            subforums = await SubforumService.GetSubforumsAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+
+    private void EditSubforum(SubforumDTO subforum)
+    {
+        editSubforum = subforum;
+        isEditing = true;
+    }
+
+    private void CancelEdit()
+    {
+        editSubforum = new SubforumDTO();
+        isEditing = false;
+    }
+
+    private async Task DeleteSubforum(int subforumId)
+    {
+        try
+        {
+            await SubforumService.DeleteSubforumAsync(subforumId);
+            subforums = await SubforumService.GetSubforumsAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+
+    private async Task TogglePosts(int subforumId)
+    {
+        if (expandedSubforumId == subforumId)
+        {
+            expandedSubforumId = null;
+            subforumPosts = new List<PostDTO>();
+        }
+        else
+        {
+            expandedSubforumId = subforumId;
+            subforumPosts = await SubforumService.GetPostsBySubforumAsync(subforumId);
+        }
+    }
+
+    private async Task AddPost(int subforumId)
+    {
+        try
+        {
+            var posts = await HttpPostService.GetPostsAsync();
+            var post = posts.FirstOrDefault(p => p.Id == newPostId);
+            if (post != null)
+            {
+                var existingPosts = await SubforumService.GetPostsBySubforumAsync(subforumId);
+                if (!existingPosts.Any(p => p.Id == newPostId))
+                {
+                    await SubforumService.AddPostsToSubforumAsync(subforumId, newPostId);
+                    subforumPosts = await SubforumService.GetPostsBySubforumAsync(subforumId);
+                    newPostId = 0;
+                }
+                else
+                {
+                    errorMessage = "Post ID is already added to the subforum.";
+                }
+            }
+            else
+            {
+                errorMessage = "Post ID does not exist.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+
+    private async Task DeletePost(int subforumId, int postId)
+    {
+        try
+        {
+            await SubforumService.DeletePostsFromSubforumAsync(subforumId, postId);
+            subforumPosts = await SubforumService.GetPostsBySubforumAsync(subforumId);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+}

@@ -136,11 +136,21 @@ public class SubForumFileRepository : ISubForumRepository
             throw new InvalidOperationException($"SubForum with ID '{subforumId}' not found.");
         }
 
-        if (!subForum.PostIds.Contains(postId))
+        subForum.AddPost(postId);
+        await SaveSubForumsAsync(subForums);
+    }
+
+    public async Task DeletePostFromSubforumAsync(int subforumId, int postId)
+    {
+        List<SubForum> subForums = await LoadSubForumsAsync();
+        SubForum subForum = subForums.SingleOrDefault(sf => sf.Id == subforumId);
+        if (subForum == null)
         {
-            subForum.PostIds.Add(postId);
-            await SaveSubForumsAsync(subForums);
+            throw new InvalidOperationException($"SubForum with ID '{subforumId}' not found.");
         }
+
+        subForum.DeletePost(postId);
+        await SaveSubForumsAsync(subForums);
     }
    
 }

@@ -4,7 +4,6 @@ namespace RepositoryContracts;
 
 public interface ISubForumRepository
 {
-    //Task<SubForum> AddAsync(SubForum subForum); // maybe change to createAsync?
     Task<SubForum> AddASync(SubForum subForum);
     Task UpdateAsync(SubForum subForum);
     Task DeleteAsync(int id);
@@ -13,4 +12,5 @@ public interface ISubForumRepository
     public Task<int> FindSubForumCreator(int subForumID);
     Task<IEnumerable<Post>> GetPostsBySubforumAsync(int subforumId);
     Task AddPostToSubforumAsync(int subforumId, int postId);
+    Task DeletePostFromSubforumAsync(int subforumId, int postId);
 }

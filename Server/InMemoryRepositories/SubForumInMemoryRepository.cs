@@ -114,4 +114,10 @@ public class SubForumInMemoryRepository: ISubForumRepository
         subForum.AddPost(postId);
         await Task.CompletedTask;
     }
+    public async Task DeletePostFromSubforumAsync(int subforumId, int postId)
+    {
+        var subForum = FindSubForumById(subforumId);
+        subForum.DeletePost(postId);
+        await Task.CompletedTask;
+    }
 }

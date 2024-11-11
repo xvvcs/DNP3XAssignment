@@ -25,4 +25,12 @@ public class SubForum
         }
     }
 
+    public void DeletePost(int postId)
+    {
+        if (PostIds.Contains(postId))
+        {
+            PostIds.Remove(postId);
+        }
+    }
+
 }

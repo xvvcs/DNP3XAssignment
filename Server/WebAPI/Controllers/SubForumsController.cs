@@ -135,4 +135,19 @@ public class SubForumsController : ControllerBase
             return Results.BadRequest(e.Message);
         }
     }
+    
+    // DELETE https://localhost:7198/subforums/{subforumId}/posts/{postId}
+    [HttpDelete("{subforumId:int}/posts/{postId:int}")]
+    public async Task<IResult> DeletePostFromSubforumAsync([FromRoute] int subforumId, [FromRoute] int postId)
+    {
+        try
+        {
+            await _subForumRepository.DeletePostFromSubforumAsync(subforumId, postId);
+            return Results.Ok($"Post with ID {postId} has been deleted from SubForum with ID {subforumId}.");
+        }
+        catch (Exception e)
+        {
+            return Results.BadRequest(e.Message);
+        }
+    }
 }
