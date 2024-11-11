@@ -1,0 +1,47 @@
+﻿@page "/add-subforum"
+@using DTOs.Posts
+@using DTOs.SubForum
+@inject Blazor.Services.ISubforumService SubforumService
+
+<h3 class="text-center my-4">Add Subforum</h3>
+
+<div class="container">
+    <EditForm Model="newSubforum" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary class="text-danger" />
+
+        <div class="mb-3">
+            <label class="form-label">Title:</label>
+            <InputText @bind-Value="newSubforum.Title" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Description:</label>
+            <InputTextArea @bind-Value="newSubforum.Description" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-primary">Add Subforum</button>
+    </EditForm>
+
+    @if (errorMessage != null)
+    {
+        <div class="alert alert-danger mt-3">@errorMessage</div>
+    }
+</div>
+
+@code {
+    private SubforumDTO newSubforum = new SubforumDTO();
+    private string? errorMessage;
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            await SubforumService.AddSubforumAsync(newSubforum);
+            newSubforum = new SubforumDTO();
+            errorMessage = "Subforum added successfully.";
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+}

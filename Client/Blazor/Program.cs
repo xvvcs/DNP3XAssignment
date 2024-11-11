@@ -13,6 +13,9 @@ builder.Services.AddScoped(
     );
 builder.Services.AddScoped<IUserService, HttpUserService>();
 builder.Services.AddScoped<IPostService, HttpPostService>();
+builder.Services.AddScoped<ISubforumService, HttpSubforumService>();
+//builder.Services.AddScoped<IModeratorService, HttpModeratorService>();
+
 
 var app = builder.Build();
 
