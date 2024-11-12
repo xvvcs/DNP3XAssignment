@@ -1,8 +1,12 @@
 @attribute [Authorize]
 @page "/users"
+@using System.Security.Claims
+@using Blazor.Services
 @using DTOs.Posts
 @inject Blazor.Services.IUserService UserService
 @inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <h3 class="text-center my-4">User Management</h3>
 
@@ -17,7 +21,7 @@
             @foreach (var user in users)
             {
                 <div class="list-group-item">
-                    @if (editingUser?.Id == user.Id)
+                    @if (editingUser?.UserId == user.Id)
                     {
                         <EditForm Model="editingUser" OnValidSubmit="HandleValidSubmit">
                             <DataAnnotationsValidator />
@@ -26,6 +30,10 @@
                             <div class="mb-3">
                                 <label class="form-label">Username:</label>
                                 <InputText @bind-Value="editingUser.Username" class="form-control" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Password:</label>
+                                <InputText @bind-Value="editingUser.Password" type="password" class="form-control" />
                             </div>
                             <button type="submit" class="btn btn-primary me-2">Update User</button>
                             <button type="button" class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
@@ -36,8 +44,11 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <span>@user.Username</span>
                             <div>
-                                <button class="btn btn-sm btn-warning me-2" @onclick="() => EditUser(user)">Edit</button>
-                                <button class="btn btn-sm btn-danger" @onclick="() => DeleteUser(user.Id)">Delete</button>
+                                @if (user.Id == userId)
+                                {
+                                    <button class="btn btn-sm btn-warning me-2" @onclick="() => EditUser(new ReplaceUserDTO { UserId = user.Id, Username = user.Username })">Edit</button>
+                                    <button class="btn btn-sm btn-danger" @onclick="() => ConfirmDeleteUser(user.Id)">Delete</button>
+                                }
                             </div>
                         </div>
                     }
@@ -54,21 +65,37 @@
 
 @code {
     private IEnumerable<UserDTO>? users;
-    private UserDTO? editingUser;
+    private ReplaceUserDTO? editingUser;
     private string? errorMessage;
+    private int userId;
+    [CascadingParameter] public Task<AuthenticationState> State { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         users = await UserService.GetUsersAsync();
+        AuthenticationState authenticationState = await State;
+        ClaimsPrincipal claimsPrincipal = authenticationState.User;
+        if(claimsPrincipal.Identity is null || !claimsPrincipal.Identity.IsAuthenticated)
+        {
+            return;
+        }
+        string? userName = claimsPrincipal.Identity?.Name;
+        IEnumerable<Claim> claims = claimsPrincipal.Claims;
+        string userIdAsString = claims.Single(c => c.Type == "Id").Value;
+        userId = int.Parse(userIdAsString);
     }
 
-    private void EditUser(UserDTO user)
+    private void EditUser(ReplaceUserDTO user)
     {
-        editingUser = new UserDTO()
+        if (user.UserId == userId)
         {
-            Username = user.Username,
-            Id = user.Id
-        };
+            editingUser = new ReplaceUserDTO()
+            {
+                Username = user.Username,
+                UserId = user.UserId,
+                Password = user.Password
+            };
+        }
     }
 
     private void CancelEdit()
@@ -90,10 +117,24 @@
         }
     }
 
+    private async Task ConfirmDeleteUser(int id)
+    {
+        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete your account?");
+        if (confirmed)
+        {
+            await DeleteUser(id);
+            Logout();
+        }
+    }
+
     private async Task DeleteUser(int id)
     {
         try
         {
+            if (id != userId)
+            {
+                throw new Exception("You cannot delete other users.");
+            }
             await UserService.DeleteUserAsync(id);
             users = await UserService.GetUsersAsync();
         }
@@ -101,5 +142,11 @@
         {
             errorMessage = ex.Message;
         }
+    }
+
+    private void Logout()
+    {
+        ((AuthProvider)AuthenticationStateProvider).Logout();
+        Navigation.NavigateTo("/");
     }
 }

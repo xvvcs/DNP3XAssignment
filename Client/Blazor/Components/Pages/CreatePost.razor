@@ -3,6 +3,7 @@
 @using DTOs.Posts
 @inject Blazor.Services.IPostService PostService
 @inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <h3 class="text-center my-4">Create a New Post</h3>
 
@@ -15,10 +16,6 @@
                         <DataAnnotationsValidator />
                         <ValidationSummary class="text-danger" />
 
-                        <div class="mb-3">
-                            <label class="form-label">User ID</label>
-                            <InputNumber @bind-Value="newPost.UserId" class="form-control" placeholder="Enter your user ID" />
-                        </div>
                         <div class="mb-3">
                             <label class="form-label">Title</label>
                             <InputText @bind-Value="newPost.Title" class="form-control" placeholder="Enter post title" />
@@ -43,6 +40,12 @@
 @code {
     private PostDTO newPost = new PostDTO();
     private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        newPost.UserId = int.Parse(authState.User.FindFirst("Id")?.Value ?? "0");
+    }
 
     private async Task HandleValidSubmit()
     {

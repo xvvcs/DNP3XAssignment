@@ -54,9 +54,9 @@ public class HttpUserService : IUserService
         }) ?? throw new InvalidOperationException();
     }
 
-    public async Task<UserDTO> UpdateUserAsync(UserDTO user)
+    public async Task<ReplaceUserDTO> UpdateUserAsync(ReplaceUserDTO user)
     {
-        HttpResponseMessage httpResponse = await client.PutAsJsonAsync($"users/{user.Id}", user);
+        HttpResponseMessage httpResponse = await client.PutAsJsonAsync($"users/{user.UserId}", user);
         string response = await httpResponse.Content.ReadAsStringAsync();
         if (!httpResponse.IsSuccessStatusCode)
         {
@@ -66,7 +66,7 @@ public class HttpUserService : IUserService
         {
             throw new Exception("The response content is empty.");
         }
-        return JsonSerializer.Deserialize<UserDTO>(response, new JsonSerializerOptions
+        return JsonSerializer.Deserialize<ReplaceUserDTO>(response, new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         }) ?? throw new InvalidOperationException("Deserialization returned null.");

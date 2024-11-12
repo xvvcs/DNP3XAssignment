@@ -1,8 +1,11 @@
 @attribute [Authorize]
 @page "/post-management"
+@using Blazor.Services
 @using DTOs.Posts
 @inject Blazor.Services.IPostService PostService
+@inject Blazor.Services.IUserService UserService
 @inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <h3 class="text-center my-4">Post Management</h3>
 
@@ -10,6 +13,10 @@
     @if (posts == null)
     {
         <p>Loading...</p>
+    }
+    else if (!posts.Any())
+    {
+        <p>No posts found. Create a new post to get started.</p>
     }
     else
     {
@@ -64,10 +71,17 @@
     private IEnumerable<PostDTO>? posts;
     private PostDTO? editingPost;
     private string? errorMessage;
+    private int? userId;
 
     protected override async Task OnInitializedAsync()
     {
-        posts = await PostService.GetPostsAsync();
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        userId = int.Parse(authState.User.FindFirst("Id")?.Value ?? "0");
+
+        if (userId != null)
+        {
+            posts = (await PostService.GetPostsAsync()).Where(post => post.UserId == userId);
+        }
     }
 
     private void EditPost(PostDTO post)
@@ -91,7 +105,7 @@
         try
         {
             await PostService.UpdatePostAsync(editingPost!);
-            posts = await PostService.GetPostsAsync();
+            posts = (await PostService.GetPostsAsync()).Where(post => post.UserId == userId);
             editingPost = null;
         }
         catch (Exception ex)
@@ -105,7 +119,7 @@
         try
         {
             await PostService.DeletePostAsync(id);
-            posts = await PostService.GetPostsAsync();
+            posts = (await PostService.GetPostsAsync()).Where(post => post.UserId == userId);
         }
         catch (Exception ex)
         {
