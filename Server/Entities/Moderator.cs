@@ -1,24 +1,28 @@
-﻿namespace Entities;
+﻿using System.Collections.Generic;
 
-public class Moderator
+namespace Entities
 {
-    public int Id { get; set; }
-    public int UserId { get; set; }
-    public int SubForumId { get; set; }
-
-    public Moderator() { }
-    public Moderator(int userId, int subForumId)
+    public class Moderator
     {
-       this.UserId = userId;
-       this.SubForumId = subForumId;
-       
-       // ID is handled in ModeratorInMemoryRepository in case of creation
-    }
+        public int Id { get; set; }
+        public int UserId { get; set; }
 
-    public Moderator(int moderatorId, int userId, int subForumId)
-    {
-        this.Id = moderatorId;
-        this.UserId = userId;
-        this.SubForumId = subForumId;
+        // Collection of subforum IDs that this moderator is associated with
+        public List<int> SubForumIds { get; set; } = new List<int>();
+
+        public Moderator() { }
+
+        public Moderator(int userId, List<int> subForumIds)
+        {
+            this.UserId = userId;
+            this.SubForumIds = subForumIds;
+        }
+
+        public Moderator(int moderatorId, int userId, List<int> subForumIds)
+        {
+            this.Id = moderatorId;
+            this.UserId = userId;
+            this.SubForumIds = subForumIds;
+        }
     }
 }

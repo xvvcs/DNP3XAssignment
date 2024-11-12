@@ -1,0 +1,140 @@
+﻿@page "/moderator-management"
+@attribute [Authorize]
+@using DTOs.Moderators
+@inject Blazor.Services.IModeratorService ModeratorService
+@inject NavigationManager Navigation
+
+<h3 class="text-center my-4">Moderator Management</h3>
+
+<div class="container">
+    @if (moderators == null)
+    {
+    <p>Loading...</p>
+    }
+    else
+    {
+    <div class="list-group">
+        @foreach (var moderator in moderators)
+        {
+        <div class="list-group-item">
+            @if (editingModerator?.Id == moderator.Id)
+            {
+            <EditForm Model="editingModerator" OnValidSubmit="HandleValidSubmit">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger" />
+
+                <div class="mb-3">
+                    <label class="form-label">Username:</label>
+                    <InputText @bind-Value="editingModerator.Username" class="form-control" />
+                </div>
+
+                <!-- Subforums the Moderator is Managing -->
+                <div class="mb-3">
+                    <label class="form-label">Subforums:</label>
+                    <ul>
+                        @foreach (var subforum in editingModerator.Subforums)
+                        {
+                        <li>@subforum.Title</li>
+                        }
+                    </ul>
+                </div>
+
+                <button type="submit" class="btn btn-primary me-2">Update Moderator</button>
+                <button type="button" class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
+            </EditForm>
+            }
+            else
+            {
+            <div class="d-flex justify-content-between align-items-center">
+                <span>@moderator.Username</span>
+                <div>
+                    <button class="btn btn-sm btn-warning me-2" @onclick="() => EditModerator(moderator)">Edit</button>
+                    <button class="btn btn-sm btn-danger" @onclick="() => DeleteModerator(moderator.Id)">Delete</button>
+                </div>
+            </div>
+
+            <!-- Displaying Subforums for Each Moderator -->
+            <div class="mt-2">
+                <strong>Subforums Moderated:</strong>
+                <ul>
+                    @foreach (var subforum in moderator.Subforums)
+                    {
+                    <li>@subforum.Title</li>
+                    }
+                </ul>
+            </div>
+            }
+        </div>
+        }
+    </div>
+    }
+</div>
+
+@if (errorMessage != null)
+{
+<div class="alert alert-danger mt-3">@errorMessage</div>
+}
+
+@code {
+private IEnumerable<ModeratorDTO>? moderators;
+private ModeratorDTO? editingModerator;
+private string? errorMessage;
+
+protected override async Task OnInitializedAsync()
+{
+await LoadModerators();
+}
+
+private async Task LoadModerators()
+{
+moderators = await ModeratorService.GetModeratorAsync();
+
+// Fetch and populate subforums for each moderator
+foreach (var moderator in moderators)
+{
+moderator.Subforums = (await ModeratorService.GetSubforumsAsync(moderator.Id)).ToList();
+}
+}
+
+private void EditModerator(ModeratorDTO moderator)
+{
+editingModerator = new ModeratorDTO()
+{
+Username = moderator.Username,
+Id = moderator.Id,
+Subforums = moderator.Subforums.ToList() // Copy existing subforums
+};
+}
+
+private void CancelEdit()
+{
+editingModerator = null;
+}
+
+private async Task HandleValidSubmit()
+{
+try
+{
+await ModeratorService.UpdateModeratorAsync(editingModerator!);
+await LoadModerators(); // Refresh moderators after update
+editingModerator = null;
+}
+catch (Exception ex)
+{
+errorMessage = ex.Message;
+}
+}
+
+private async Task DeleteModerator(int id)
+{
+try
+{
+await ModeratorService.DeleteModeratorAsync(id);
+await LoadModerators(); // Refresh moderators after deletion
+}
+catch (Exception ex)
+{
+errorMessage = ex.Message;
+}
+}
+}

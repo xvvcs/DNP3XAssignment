@@ -29,32 +29,43 @@
             <NavLink class="nav-link" href="posts" Match="NavLinkMatch.All">
                 <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> All Posts
             </NavLink>
-
-            <!-- Subforums Subsection -->
+            
             <div class="nav-item px-3">
                 <NavLink href="/subforums" class="nav-link" Match="NavLinkMatch.All">Subforums</NavLink>
                 <NavLink href="/subforum-management" class="nav-link" Match="NavLinkMatch.All">Subforum Management</NavLink>
             </div>
         </div>
-
+        
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="add-user">
                 <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Add User
             </NavLink>
         </div>
-
+        
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="users">
                 <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> User Management
             </NavLink>
         </div>
-
+        
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="add-moderator">
+                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Add Moderator
+            </NavLink>
+        </div>
+        
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="moderator-management">
+                <span class="bi bi-gear-fill-nav-menu" aria-hidden="true"></span> Moderator Management
+            </NavLink>
+        </div>
+        
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="create-post">
                 <span class="bi bi-pencil-square-nav-menu" aria-hidden="true"></span> Create Post
             </NavLink>
         </div>
-
+        
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="post-management">
                 <span class="bi bi-pencil-square-nav-menu" aria-hidden="true"></span> Post Management
@@ -62,12 +73,13 @@
         </div>
         
         <div class="nav-item px-3">
-        <NavLink class="nav-link text-light" href="register">
-            <span class="bi bi-person-plus" aria-hidden="true"></span> Register
-        </NavLink>
+            <NavLink class="nav-link text-light" href="register">
+                <span class="bi bi-person-plus" aria-hidden="true"></span> Register
+            </NavLink>
         </div>
     </nav>
 </div>
+
 
 @if (!string.IsNullOrEmpty(notificationMessage))
 {

@@ -1,0 +1,50 @@
+﻿@page "/add-moderator"
+@attribute [Authorize]
+@using DTOs.Moderators
+@inject Blazor.Services.IModeratorService ModeratorService
+
+<h3 class="text-center my-4">Add Moderator</h3>
+
+<div class="container">
+    <EditForm Model="newModerator" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary class="text-danger" />
+
+        <div class="mb-3">
+            <label class="form-label">User ID:</label>
+            <InputText @bind-Value="UserIdText" class="form-control" />
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Add Moderator</button>
+    </EditForm>
+
+    @if (errorMessage != null)
+    {
+        <div class="alert alert-danger mt-3">@errorMessage</div>
+    }
+</div>
+
+@code {
+    private AddModeratorDTO newModerator = new AddModeratorDTO();
+    private string? errorMessage;
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            await ModeratorService.AddModeratorAsync(newModerator);
+            newModerator = new AddModeratorDTO(); // Reset the form
+            errorMessage = "Moderator added successfully."; // Success message
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message; // Display error message
+        }
+    }
+    private string UserIdText
+    {
+        get => newModerator.UserId.ToString();
+        set => newModerator.UserId = int.TryParse(value, out var result) ? result : 0;
+    }
+
+}
