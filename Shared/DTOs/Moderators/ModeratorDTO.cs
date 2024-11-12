@@ -4,7 +4,7 @@ namespace DTOs.Moderators;
 
 public class ModeratorDTO
 {
-    public string Username { get; set; }
+    public int UserId { get; set; }
     public int Id { get; set; }
    
     // Holds associated subforums

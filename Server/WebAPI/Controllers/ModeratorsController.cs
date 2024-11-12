@@ -10,7 +10,7 @@ namespace WebAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class ModeratorsController: ControllerBase
+public class ModeratorsController : ControllerBase
 {
     private readonly IModeratorRepository _moderatorRepository;
 
@@ -18,21 +18,19 @@ public class ModeratorsController: ControllerBase
     {
         _moderatorRepository = moderatorRepository;
     }
-    
-    // POST https://localhost:7198/moderators
+
     [HttpPost]
     public async Task<IResult> AddModeratorAsync([FromBody] AddModeratorDTO request)
     {
         Moderator moderator = new Moderator
         {
             UserId = request.UserId,
-            SubForumId = request.SubForumId
+            SubForumIds = request.SubForumIds
         };
         await _moderatorRepository.AddAsync(moderator);
         return Results.Created($"Moderators/{moderator.Id}", moderator);
     }
-    
-    // GET https://localhost:7198/subforums/{id}
+
     [HttpGet("{id:int}")]
     public async Task<IResult> GetSingleModeratorAsync([FromRoute] int id)
     {
@@ -52,70 +50,71 @@ public class ModeratorsController: ControllerBase
             return Results.NotFound(e.Message);
         }
     }
-    
-    // DELETE https://localhost:7198/moderators/{id}
+
     [HttpDelete("{id:int}")]
     public async Task<IResult> DeleteModeratorAsync(int id)
     {
         await _moderatorRepository.DeleteAsync(id);
         return Results.NoContent();
     }
-    
-    // PUT https://localhost:7198/moderators/{id}
+
     [HttpPut("{id:int}")]
     public async Task<IResult> UpdateModeratorAsync([FromRoute] int id, [FromBody] ReplaceModeratorDTO request)
     {
         Moderator existingModerator = await _moderatorRepository.GetSingleAsync(id);
         if (existingModerator == null)
         {
-            return Results.NotFound($"Moderator with ID {id} not found. ");
+            return Results.NotFound($"Moderator with ID {id} not found.");
         }
 
-        // Update moderator's properties using the DTO
         existingModerator.UserId = request.UserId;
-        existingModerator.SubForumId = request.SubForumId;
-        
+        existingModerator.SubForumIds = request.SubForumIds;
+
         await _moderatorRepository.UpdateAsync(existingModerator);
-        
+
         return Results.Ok(existingModerator);
     }
-    
-    // GET https://localhost:7198/subforums
+
     [HttpGet]
     public async Task<IResult> GetModeratorsAsync([FromQuery] int? subForumId, [FromQuery] int? userId)
     {
         IQueryable<Moderator> moderatorsQuery = _moderatorRepository.GetManyAsync();
 
-        // Filter by subForumId if it's provided (not null or 0)
         if (subForumId.HasValue && subForumId != 0)
         {
-            moderatorsQuery = moderatorsQuery.Where(m => m.SubForumId == subForumId);
+            moderatorsQuery = moderatorsQuery.Where(m => m.SubForumIds.Contains(subForumId.Value));
         }
 
-        // Filter by userId if it's provided
         if (userId.HasValue)
         {
             moderatorsQuery = moderatorsQuery.Where(m => m.UserId == userId);
         }
 
-        // Fetch the filtered results asynchronously
         List<Moderator> moderators = moderatorsQuery.ToList();
 
         return Results.Ok(moderators);
     }
-    
-    // GET https://localhost:7198/moderators/{id}/creator
+
     [HttpGet("{id:int}/creator")]
     public async Task<IResult> GetModeratorCreatorAsync([FromRoute] int id)
     {
         Moderator? moderator = await _moderatorRepository.GetSingleAsync(id);
-        // If no creator is found (assuming 0 means no valid ID)
         if (moderator == null)
         {
             return Results.NotFound($"No creator found for Moderator with ID {id}.");
         }
 
-        // Return the found creator's ID
         return Results.Ok(new { CreatorId = moderator });
+    }
+    
+    [HttpGet("{id:int}/subforums")]
+    public async Task<IResult> GetModeratorsBySubForumIdAsync([FromRoute] int id)
+    {
+        List<Moderator> moderators = await _moderatorRepository.GetModeratorsBySubForumIdAsync(id);
+        if(moderators.Count == 0)
+        {
+            return Results.NotFound($"No moderators found for SubForum with ID {id}.");
+        }
+        return Results.Ok(moderators);
     }
 }

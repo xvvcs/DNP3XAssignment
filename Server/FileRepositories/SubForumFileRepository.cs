@@ -152,5 +152,12 @@ public class SubForumFileRepository : ISubForumRepository
         subForum.DeletePost(postId);
         await SaveSubForumsAsync(subForums);
     }
+    
+    public async Task<IEnumerable<SubForum>> GetSubForumsByUserIdAsync(int userId)
+    {
+        List<SubForum> subForums = await LoadSubForumsAsync();
+        var filteredSubForums = subForums.Where(sf => sf.UserId == userId).ToList();
+        return filteredSubForums;
+    }
    
 }

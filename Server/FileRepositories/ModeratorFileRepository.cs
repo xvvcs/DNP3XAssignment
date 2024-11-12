@@ -4,10 +4,10 @@ using RepositoryContracts;
 
 namespace FileRepositories;
 
-public class ModeratorFileRepository: IModeratorRepository
+public class ModeratorFileRepository : IModeratorRepository
 {
-    private readonly string _filePath = "comments.json";
-    
+    private readonly string _filePath = "moderators.json";
+
     public ModeratorFileRepository()
     {
         if (!File.Exists(_filePath))
@@ -15,45 +15,23 @@ public class ModeratorFileRepository: IModeratorRepository
             File.WriteAllText(_filePath, "[]");
         }
     }
-    public async Task<Moderator> FindModerator(Moderator moderator)
-    {
-        List<Moderator> moderators = await LoadModeratorsAsync();
-        Moderator? existingModerator = moderators.FirstOrDefault(m => m.Id == moderator.Id);
-        if (existingModerator is null)
-        {
-            throw new InvalidOperationException($"No moderator found with id: {moderator.Id}");
-        }
 
-        return existingModerator;
-    }
-
-    public async Task<Moderator> FindModeratorById(int id)
-    {
-        List<Moderator> moderators = await LoadModeratorsAsync();
-        Moderator? existingModerator = moderators.FirstOrDefault(m => m.Id == id);
-        if (existingModerator is null)
-        {
-            throw new InvalidOperationException($"No moderator found with id: {id}");
-        }
-
-        return existingModerator;
-    }
-    
     private async Task<List<Moderator>> LoadModeratorsAsync()
     {
-        string moderatorAsJson = await File.ReadAllTextAsync(_filePath);
-        return JsonSerializer.Deserialize<List<Moderator>>(moderatorAsJson);
+        string moderatorsAsJson = await File.ReadAllTextAsync(_filePath);
+        return JsonSerializer.Deserialize<List<Moderator>>(moderatorsAsJson) ?? new List<Moderator>();
     }
+
     private async Task SaveModeratorsAsync(List<Moderator> moderators)
     {
-        string commentAsJson = JsonSerializer.Serialize(moderators);
-        await File.WriteAllTextAsync(_filePath, commentAsJson);
+        string moderatorsAsJson = JsonSerializer.Serialize(moderators);
+        await File.WriteAllTextAsync(_filePath, moderatorsAsJson);
     }
+
     public async Task<Moderator> AddAsync(Moderator moderator)
     {
         List<Moderator> moderators = await LoadModeratorsAsync();
-        int maxID = moderators.Count > 0 ? moderators.Max(m => m.Id) : 1;
-        moderator.Id = maxID + 1;
+        moderator.Id = moderators.Any() ? moderators.Max(m => m.Id) + 1 : 1;
         moderators.Add(moderator);
         await SaveModeratorsAsync(moderators);
         return moderator;
@@ -95,9 +73,8 @@ public class ModeratorFileRepository: IModeratorRepository
 
     public async Task<List<Moderator>> GetModeratorsBySubForumIdAsync(int subForumId)
     {
-        List<Moderator> moderators = await LoadModeratorsAsync();
-        var filteredModerators = moderators.Where(m => m.SubForumId == subForumId).ToList();
-        return filteredModerators;
+        List<Moderator> moderators= await LoadModeratorsAsync();
+        return moderators.Where(m => m.SubForumIds.Contains(subForumId)).ToList();
     }
 
     public async Task<Moderator> GetSingleAsync(int id)

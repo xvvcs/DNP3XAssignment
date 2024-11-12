@@ -17,6 +17,7 @@ builder.Services.AddScoped<IPostService, HttpPostService>();
 builder.Services.AddScoped<ISubforumService, HttpSubforumService>();
 //builder.Services.AddScoped<IModeratorService, HttpModeratorService>();
 builder.Services.AddScoped<AuthenticationStateProvider, AuthProvider>();
+builder.Services.AddScoped<IModeratorService, HttpModeratorService>();
 
 
 var app = builder.Build();

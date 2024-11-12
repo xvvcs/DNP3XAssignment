@@ -150,4 +150,16 @@ public class SubForumsController : ControllerBase
             return Results.BadRequest(e.Message);
         }
     }
+    // GET https://localhost:7198/subforums/user/{userId}
+    [HttpGet("user/{userId:int}")]
+    public async Task<IResult> GetSubForumsByUserIdAsync([FromRoute] int userId)
+    {
+        var subForums = await _subForumRepository.GetSubForumsByUserIdAsync(userId);
+        if (subForums == null || !subForums.Any())
+        {
+            return Results.NotFound($"No SubForums found for User with ID {userId}.");
+        }
+
+        return Results.Ok(subForums);
+    }
 }

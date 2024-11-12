@@ -1,50 +1,99 @@
 ﻿@page "/add-moderator"
 @attribute [Authorize]
 @using DTOs.Moderators
+@using DTOs.SubForum
 @inject Blazor.Services.IModeratorService ModeratorService
+@inject Blazor.Services.ISubforumService SubforumService
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <h3 class="text-center my-4">Add Moderator</h3>
 
 <div class="container">
-    <EditForm Model="newModerator" OnValidSubmit="HandleValidSubmit">
-        <DataAnnotationsValidator />
-        <ValidationSummary class="text-danger" />
-
-        <div class="mb-3">
-            <label class="form-label">User ID:</label>
-            <InputText @bind-Value="UserIdText" class="form-control" />
-        </div>
-        
-        <button type="submit" class="btn btn-primary">Add Moderator</button>
-    </EditForm>
-
-    @if (errorMessage != null)
+    @if (userSubforums == null)
     {
-        <div class="alert alert-danger mt-3">@errorMessage</div>
+        <p>Loading...</p>
+    }
+    else if (!userSubforums.Any())
+    {
+        <div class="alert alert-info mt-3">
+            You have not created any subforums yet. Please create a subforum first before adding moderators.
+        </div>
+    }
+    else
+    {
+        <EditForm Model="newModerator" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" />
+
+            <div class="mb-3">
+                <label class="form-label">User ID:</label>
+                <InputText @bind-Value="UserIdText" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Subforums:</label>
+                <InputSelect @bind-Value="selectedSubForumId" class="form-control" multiple>
+                    @foreach (var subforum in userSubforums)
+                    {
+                        <option value="@subforum.Id">@subforum.Title</option>
+                    }
+                </InputSelect>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Add Moderator</button>
+        </EditForm>
+
+        @if (errorMessage != null)
+        {
+            <div class="alert alert-danger mt-3">@errorMessage</div>
+        }
     }
 </div>
 
 @code {
     private AddModeratorDTO newModerator = new AddModeratorDTO();
     private string? errorMessage;
+    private List<SubforumDTO>? userSubforums;
+    private int selectedSubForumId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            var userId = int.Parse(user.FindFirst("Id").Value);
+            try
+            {
+                userSubforums = (await SubforumService.GetSubforumsByUserIdAsync(userId)).ToList();
+            }
+            catch (Exception ex)
+            {
+                errorMessage = ex.Message;
+                userSubforums = new List<SubforumDTO>(); // Ensure userSubforums is not null
+            }
+        }
+    }
 
     private async Task HandleValidSubmit()
     {
         try
         {
+            newModerator.SubForumIds.Add(selectedSubForumId);
             await ModeratorService.AddModeratorAsync(newModerator);
-            newModerator = new AddModeratorDTO(); // Reset the form
-            errorMessage = "Moderator added successfully."; // Success message
+            newModerator = new AddModeratorDTO();
+            errorMessage = "Moderator added successfully.";
         }
         catch (Exception ex)
         {
-            errorMessage = ex.Message; // Display error message
+            errorMessage = ex.Message;
         }
     }
+
     private string UserIdText
     {
         get => newModerator.UserId.ToString();
         set => newModerator.UserId = int.TryParse(value, out var result) ? result : 0;
     }
-
 }

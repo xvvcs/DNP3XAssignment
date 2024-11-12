@@ -13,4 +13,5 @@ public interface ISubForumRepository
     Task<IEnumerable<Post>> GetPostsBySubforumAsync(int subforumId);
     Task AddPostToSubforumAsync(int subforumId, int postId);
     Task DeletePostFromSubforumAsync(int subforumId, int postId);
+    Task<IEnumerable<SubForum>> GetSubForumsByUserIdAsync(int userId);
 }

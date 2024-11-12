@@ -120,4 +120,18 @@ public class HttpSubforumService : ISubforumService
             throw new Exception($"Error deleting post from subforum with ID {subforumId}: {ex.Message}", ex);
         }
     }
+
+    public async Task<IEnumerable<SubforumDTO>> GetSubforumsByUserIdAsync(int userId)
+    {
+        HttpResponseMessage httpResponse = await _client.GetAsync($"subforums/user/{userId}");
+        string response = await httpResponse.Content.ReadAsStringAsync();
+        if (!httpResponse.IsSuccessStatusCode)
+        {
+            throw new Exception(response);
+        }
+        return JsonSerializer.Deserialize<IEnumerable<SubforumDTO>>(response, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        }) ?? throw new InvalidOperationException("Failed to deserialize response.");
+    }
 }

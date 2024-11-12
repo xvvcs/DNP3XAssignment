@@ -124,6 +124,20 @@ namespace Blazor.Services
             }) ?? throw new InvalidOperationException("Failed to deserialize response.");
         }
 
+        public async Task<List<ModeratorDTO>> GetModeratorsBySubForumIdAsync(int subForumId)
+        {
+            HttpResponseMessage httpResponse = await client.GetAsync($"moderators/subforums/{subForumId}");
+            string response = await httpResponse.Content.ReadAsStringAsync();
+            if (!httpResponse.IsSuccessStatusCode)
+            {
+                throw new Exception(response);
+            }
+            return JsonSerializer.Deserialize<List<ModeratorDTO>>(response, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            }) ?? throw new InvalidOperationException("Failed to deserialize response.");
+        }
+
         public async Task AssignModeratorToSubforumsAsync(int moderatorId, List<int> subforumIds)
         {
             HttpResponseMessage httpResponse = await client.PostAsJsonAsync($"moderators/{moderatorId}/subforums/assign", subforumIds);

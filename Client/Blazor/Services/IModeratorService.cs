@@ -1,4 +1,6 @@
-﻿using DTOs.Moderators;
+﻿using System.Collections;
+using Blazor.Components.Pages;
+using DTOs.Moderators;
 using DTOs.Posts;
 using DTOs.SubForum;
 
@@ -15,9 +17,12 @@ public interface IModeratorService
     // Gets all subforums managed by a moderator
     public Task<IEnumerable<SubforumDTO>> GetSubforumsAsync(int moderatorId);
 
+    public Task<List<ModeratorDTO>> GetModeratorsBySubForumIdAsync(int subForumId);
+
     // Assigns a moderator to multiple subforums
     public Task AssignModeratorToSubforumsAsync(int moderatorId, List<int> subforumIds);
 
     // Removes a moderator from specific subforums
     public Task RemoveModeratorFromSubforumsAsync(int moderatorId, List<int> subforumIds);
+    
 }

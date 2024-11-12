@@ -13,4 +13,5 @@ public interface ISubforumService
     public Task<IEnumerable<PostDTO>> GetPostsBySubforumAsync(int subforumId);
     public Task AddPostsToSubforumAsync(int subforumId, int postId);
     public Task DeletePostsFromSubforumAsync(int subforumId, int postId);
+    public Task<IEnumerable<SubforumDTO>> GetSubforumsByUserIdAsync(int userId);
 }

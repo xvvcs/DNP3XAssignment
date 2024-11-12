@@ -6,8 +6,7 @@ namespace Entities
     {
         public int Id { get; set; }
         public int UserId { get; set; }
-
-        // Collection of subforum IDs that this moderator is associated with
+        
         public List<int> SubForumIds { get; set; } = new List<int>();
 
         public Moderator() { }
