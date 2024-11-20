@@ -2,38 +2,32 @@ namespace Entities;
 
 public class Post
 {
-    public int Id { get; set; }
+    public int Id { get; set; }  // primary key
     public string Title { get; set; }
     public string Body { get; set; }
-    public int UserId { get; set; }
-    public List<int> Like { get; set; } = new List<int>();
-    public int LikeCount { get; set; }
-    public List<int> Dislike { get; set; } = new List<int>();
-    public int DislikeCount { get; set; }
+    public int UserId { get; set; } // foreign key - > User
+    public int? SubForumId { get; set; }  // foreign key -> SubForum  
+    
+    public User User { get; set; } // Reference navigation property for user
+    public SubForum SubForum { get; set; } // Reference navigation property for subforum
+    public List<Comment> Comments { get; set; } = []; // Collection navigation property for comments
+    public List<Reaction> Reactions { get; set; } = []; // Collection navigation property for reactions
+    
 
-    public Post() { }
+    private Post() { }
     public Post(string Title, string Body, int UserId)
     {
         this.Body = Body;
         this.Title = Title;
         this.UserId = UserId;
-        LikeCount = Like.Count;
-        DislikeCount = Dislike.Count;
     }
 
-    public Post(string Title, string Body, int userID, int Id)
+    public Post(string Title, string Body, int UserId, int Id, int SubForumId )
     {
         this.Id = Id;
         this.Title = Title;
         this.Body = Body;
-        this.UserId = userID;
-        LikeCount = Like.Count;
-        DislikeCount = Dislike.Count;
-    }
-    
-    public void updateLikeCount()
-    {
-        LikeCount = Like.Count;
-        DislikeCount = Dislike.Count;
+        this.UserId = UserId;
+        this.SubForumId = SubForumId;
     }
 }

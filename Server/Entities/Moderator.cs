@@ -4,24 +4,20 @@ namespace Entities
 {
     public class Moderator
     {
-        public int Id { get; set; }
-        public int UserId { get; set; }
+        public int UserId { get; set; }  // Foreign Key -> User
+        public int SubForumId { get; set; } // Foreign Key -> SubForum
         
-        public List<int> SubForumIds { get; set; } = new List<int>();
+        // Primary key -> UserId + SubForumId (Composite Key)
+        
+        public User User { get; set; } // Reference navigation property for user
+        public SubForum SubForum { get; set; } // Reference navigation property for subforum
 
-        public Moderator() { }
+        private Moderator() { }
 
-        public Moderator(int userId, List<int> subForumIds)
+        public Moderator(int UserId, int SubForumId)
         {
-            this.UserId = userId;
-            this.SubForumIds = subForumIds;
-        }
-
-        public Moderator(int moderatorId, int userId, List<int> subForumIds)
-        {
-            this.Id = moderatorId;
-            this.UserId = userId;
-            this.SubForumIds = subForumIds;
+            this.UserId = UserId;
+            this.SubForumId = SubForumId;
         }
     }
 }

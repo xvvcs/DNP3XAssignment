@@ -2,35 +2,23 @@
 
 public class SubForum
 {
-    public int Id { get; set; }
+    public int Id { get; set; }  // primary key
     public string Title { get; set; }
-    public string Description { get; set; }
-    public int UserId { get; set; }
+    public string? Description { get; set; }
+    public List<Post> Posts { get; set; } = []; // Collection navigation property for posts
+    public List<Moderator> Moderators { get; set; } = []; // Collection navigation property for moderators
     
-    public List<int> PostIds { get; set; } = new List<int>();
-    
-    public SubForum() { }
-    public SubForum(string title, string description, int userId)
+    private SubForum() { }
+    public SubForum(string title, string description)
     {
         Title = title;
         Description = description;
-        UserId = userId;
-        PostIds = new List<int>();
+        
     }
-    public void AddPost(int postId)
+    public SubForum(string title, string description, int id)
     {
-        if (!PostIds.Contains(postId))
-        {
-            PostIds.Add(postId);
-        }
+        Id = id;
+        Title = title;
+        Description = description;
     }
-
-    public void DeletePost(int postId)
-    {
-        if (PostIds.Contains(postId))
-        {
-            PostIds.Remove(postId);
-        }
-    }
-
 }
