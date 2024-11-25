@@ -126,7 +126,7 @@ namespace Blazor.Services
 
         public async Task<List<ModeratorDTO>> GetModeratorsBySubForumIdAsync(int subForumId)
         {
-            HttpResponseMessage httpResponse = await client.GetAsync($"moderators/subforums/{subForumId}");
+            HttpResponseMessage httpResponse = await client.GetAsync($"moderators/{subForumId}/subforums");
             string response = await httpResponse.Content.ReadAsStringAsync();
             if (!httpResponse.IsSuccessStatusCode)
             {
