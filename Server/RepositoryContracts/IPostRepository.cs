@@ -4,8 +4,7 @@ namespace RepositoryContracts;
 
 public interface IPostRepository
 {
-    
-    Task<Post> FindPostById(int id);
+    Task<Post> FindPostByIdAsync(int id);
     Task<Post> AddASync (Post post);
     Task<Post> GetSingleAsync (int id);
     Task DeleteAsync (int id);

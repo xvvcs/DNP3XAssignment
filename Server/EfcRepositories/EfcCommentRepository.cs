@@ -14,7 +14,7 @@ public class EfcCommentRepository : ICommentRepository
         _context = context;
     }
 
-    public async Task<Comment> FindCommentById(int id)
+    public async Task<Comment> FindCommentByIdAsync(int id)
     {
         return await _context.Comments.FindAsync(id);
     }

@@ -36,7 +36,7 @@ public class EfcPostRepository : IPostRepository
         return _context.Posts.AsQueryable();
     }
 
-    public async Task<Post> FindPostById(int id)
+    public async Task<Post> FindPostByIdAsync(int id)
     {
         return await _context.Posts.FindAsync(id);
     }

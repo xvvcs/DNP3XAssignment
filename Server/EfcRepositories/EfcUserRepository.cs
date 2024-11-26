@@ -13,9 +13,7 @@ public class EfcUserRepository : IUserRepository
     {
         _context = context;
     }
-
     
-
     public async Task UpdateAsync(User user)
     {
         if (!await _context.Users.AnyAsync(u => u.Id == user.Id))
@@ -46,8 +44,7 @@ public class EfcUserRepository : IUserRepository
     {
         return await _context.Users.FindAsync(id);
     }
-
-
+    
     public async Task<User> AddASync(User user)
     {
         EntityEntry<User> entityEntry = await _context.Users.AddAsync(user);

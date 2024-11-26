@@ -6,11 +6,8 @@ namespace Entities
     {
         public int Id { get; set; }
         public int UserId { get; set; }
-        
         public List<int> SubForumIds { get; set; } = new List<int>();
-
         public Moderator() { }
-
         public Moderator(int userId, List<int> subForumIds)
         {
             this.UserId = userId;
